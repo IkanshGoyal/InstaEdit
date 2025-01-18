@@ -1,0 +1,189 @@
+/* HomePage.css */
+body {
+    background: linear-gradient(to bottom right, #4B9FE1, #28559A);
+}
+
+.homepage-container {
+  overflow-x: hidden;
+}
+
+.hero-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease-out, border 0.5s ease-out;
+}
+
+.features-section {
+  padding: 100px 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  color: whitesmoke;
+  gap: 100px;
+}
+
+.feature-card {
+  opacity: 0;
+  transform: translateY(100px);
+  transition: all 1s ease;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.feature-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature-content h3 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #2d3436;
+}
+
+.feature-content p {
+  font-size: 1.2rem;
+  color: #636e72;
+  line-height: 1.6;
+}
+
+.gallery-section {
+  padding: 100px 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 150px;
+}
+
+.gallery-item {
+  display: flex;
+  gap: 30px;
+  opacity: 0;
+}
+
+.gallery-item.show {
+  opacity: 1;
+}
+
+.gallery-img {
+  width: calc(40% - 15px);
+  height: 600px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.5s ease-out;
+}
+
+.gallery-item:hover .gallery-img {
+  transform: scale(1.05);
+}
+
+.try-editor-btn {
+  position: absolute;
+  top: 70%;
+  right: 45%;
+  padding: 15px 30px;
+  background: #28559A;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.try-editor-btn:hover {
+  transform: translateY(-3px);
+}
+
+.card {
+  position: relative;
+  width: 420px;
+  height: 320px;
+  background: #28559A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.card::before,
+.card::after {
+  position: absolute;
+  content: "";
+  width: 20%;
+  height: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: bold;
+  background-color: #63BCE5;
+  transition: all 0.5s;
+}
+
+.card::before {
+  top: 0;
+  right: 0;
+  border-radius: 0 15px 0 100%;
+}
+
+.card::after {
+  bottom: 0;
+  left: 0;
+  border-radius: 0 100% 0 15px;
+}
+
+.card:hover::before,
+.card:hover:after {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  transition: all 0.5s;
+  text-align: center;
+}
+
+#card1:hover:after {
+  content: "Transform your images with our professional-grade filters";
+}
+
+#card2:hover:after {
+  content: "Add text behind subjects with intelligent detection";
+}
+
+#card3:hover:after {
+  content: "Fine-tune brightness, contrast, and saturation instantly";
+}
+
+@media (max-width: 768px) {
+  .gallery-item {
+    flex-direction: column;
+  }
+
+  .gallery-img {
+    width: 100%;
+  }
+
+  .feature-card {
+    margin: 0 20px;
+  }
+}

@@ -1,0 +1,154 @@
+/* ImageEditor.css */
+.editor-container {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: aliceblue;
+}
+
+.header {
+    padding: 0px 20px;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    justify-items: center;
+    background: #28559A;
+}
+
+.editor-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+}
+
+.upload-button {
+    padding: 8px 16px;
+    margin: 20px;
+    background: #0F2557;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.upload-button:hover {
+  border-color: #999;
+  background: #f0f0f0;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.canvas-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.editor-canvas {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.text-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.filter-control {
+  margin: 12px 0;
+}
+
+.filter-label {
+  display: block;
+  text-transform: capitalize;
+  margin-bottom: 4px;
+  color: #666;
+}
+
+.slider-input {
+  width: 100%;
+  margin: 8px 0;
+}
+
+.filter-value {
+  font-size: 12px;
+  color: #666;
+  margin-left: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action-button {
+  padding: 8px 16px;
+  background: #0F2557;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.action-button:hover, .upload-button:hover {
+  background: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .editor-container {
+    padding: 10px;
+  }
+
+  .editor-card {
+    padding: 15px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+}
