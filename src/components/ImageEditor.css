@@ -7,12 +7,12 @@
 }
 
 .header {
-    padding: 0px 20px;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    justify-items: center;
-    background: #28559A;
+  padding: 0px 20px;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  justify-items: center;
+  background: #28559a;
 }
 
 .editor-card {
@@ -22,21 +22,17 @@
   padding: 20px;
 }
 
-.upload-section {
-  margin-bottom: 20px;
-}
-
 .upload-button {
-    padding: 8px 16px;
-    margin: 20px;
-    background: #0F2557;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: background 0.3s ease;
+  padding: 8px 16px;
+  margin: 20px;
+  background: #0f2557;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.3s ease;
 }
 
 .upload-button:hover {
@@ -48,33 +44,28 @@
   display: none;
 }
 
+.controls {
+  display: flex;
+  justify-content: center;
+  height: 40px;
+  width: 100%;
+  background: #28559a;
+}
+
+.controls div {
+  padding: 0 20px;
+}
+
 .canvas-container {
   margin: 20px 0;
   text-align: center;
 }
 
 .editor-canvas {
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
   border: 1px solid #ddd;
   border-radius: 4px;
-}
-
-.controls-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.control-group {
-  margin-bottom: 20px;
-}
-
-.control-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
 }
 
 .text-input {
@@ -120,7 +111,7 @@
 
 .action-button {
   padding: 8px 16px;
-  background: #0F2557;
+  background: #0f2557;
   color: white;
   border: none;
   border-radius: 4px;
@@ -130,7 +121,8 @@
   transition: background 0.3s ease;
 }
 
-.action-button:hover, .upload-button:hover {
+.action-button:hover,
+.upload-button:hover {
   background: #0056b3;
 }
 
@@ -151,4 +143,65 @@
   .action-button {
     width: 100%;
   }
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 10px;
+  padding-bottom: 10px;
+}
+
+.control-tab {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #f0f0f0;
+}
+
+.control-tab.active {
+  color: #007bff;
+}
+
+.editor-layout {
+  display: flex;
+  background: transparent;
+  height: calc(100% - (100px + 40px));
+}
+
+.canvas-container {
+  flex: 1;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+}
+
+.canvas-container canvas {
+    object-fit: contain;
+}
+
+.controls-section {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  justify-items: center;
+  height: calc(100vh - (165px));
+}
+
+.editor-canvas {
+  max-width: 90%;
+  border: 0px;
+  height: 100%;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.filter-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
