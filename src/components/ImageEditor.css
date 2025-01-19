@@ -254,6 +254,62 @@
   cursor: pointer;
 }
 
+.canvas-container {
+  flex: 1;
+  display: flex;
+  padding-bottom: 10%;
+  justify-content: center;
+  position: relative; /* Ensure the crop rectangle is positioned relative to the canvas */
+}
+
+.crop-rectangle {
+  position: absolute;
+  border: 2px dashed #fff; /* White dashed border for visibility */
+  cursor: move;
+  resize: both; /* Allow resizing */
+  overflow: auto; /* Enable resize handles */
+  pointer-events: all; /* Ensure the rectangle can be interacted with */
+}
+
+.crop-rectangle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px dashed #000; /* Black dashed border for contrast */
+}
+
+.crop-buttons {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.crop-button {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-button.save {
+  background: #4caf50;
+  color: #fff;
+}
+
+.crop-button.discard {
+  background: #f44336;
+  color: #fff;
+}
+
 .preset-filters {
   width: 90%;
   height: 500px;
@@ -302,4 +358,56 @@
 
 .preset-filters button:hover::before {
   width: 100%;
+}
+
+.text-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-control label {
+  color: whitesmoke;
+  font-family: Chalkboard;
+  font-weight: 900;
+}
+
+.text-control {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  position: static;
+  max-width: 240px;
+}
+
+.text-control label.text {
+  font-size: 1rem;
+  color: #818cf8;
+  font-weight: 700;
+  position: relative;
+  top: 0.5rem;
+  left: 0.1rem;
+  margin: 0 0 0 7px;
+  padding: 0 3px;
+  background: #e8e8e8;
+  width: fit-content;
+  font-family: Chalkboard;
+}
+
+.text-control input,
+.text-control select {
+  width: 250px;
+  padding: 11px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px #0f2557 solid;
+  border-radius: 5px;
+  background: #28559a;
+  color: whitesmoke;
+}
+
+.text-control input:focus {
+  outline: none;
 }

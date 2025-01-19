@@ -5,8 +5,9 @@ import FilterIcon from "@mui/icons-material/Filter";
 import TuneIcon from "@mui/icons-material/Tune";
 import CropIcon from "@mui/icons-material/Crop";
 import RotateRightIcon from "@mui/icons-material/RotateRight";
-import ResizeIcon from "@mui/icons-material/AspectRatio";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
 
 const ImageEditor = () => {
@@ -27,6 +28,21 @@ const ImageEditor = () => {
     vibrance: 100,
     sharpness: 100,
   });
+  const [textProperties, setTextProperties] = useState({
+    text: "",
+    x: 50,
+    y: 50,
+    rotation: 0,
+    opacity: 1,
+    font: "Arial",
+    color: "#ffffff",
+    fontWeight: "normal",
+    fontSize: 48,
+  });
+  const [isCropping, setIsCropping] = useState(false);
+  const [cropRect, setCropRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -129,9 +145,18 @@ const ImageEditor = () => {
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
-      data[i] = r * (cos + (1 - cos) / 3) + g * ((1 - cos) / 3 - Math.sqrt(3) / 3 * sin) + b * ((1 - cos) / 3 + Math.sqrt(3) / 3 * sin);
-      data[i + 1] = r * ((1 - cos) / 3 + Math.sqrt(3) / 3 * sin) + g * (cos + (1 - cos) / 3) + b * ((1 - cos) / 3 - Math.sqrt(3) / 3 * sin);
-      data[i + 2] = r * ((1 - cos) / 3 - Math.sqrt(3) / 3 * sin) + g * ((1 - cos) / 3 + Math.sqrt(3) / 3 * sin) + b * (cos + (1 - cos) / 3);
+      data[i] =
+        r * (cos + (1 - cos) / 3) +
+        g * ((1 - cos) / 3 - (Math.sqrt(3) / 3) * sin) +
+        b * ((1 - cos) / 3 + (Math.sqrt(3) / 3) * sin);
+      data[i + 1] =
+        r * ((1 - cos) / 3 + (Math.sqrt(3) / 3) * sin) +
+        g * (cos + (1 - cos) / 3) +
+        b * ((1 - cos) / 3 - (Math.sqrt(3) / 3) * sin);
+      data[i + 2] =
+        r * ((1 - cos) / 3 - (Math.sqrt(3) / 3) * sin) +
+        g * ((1 - cos) / 3 + (Math.sqrt(3) / 3) * sin) +
+        b * (cos + (1 - cos) / 3);
     }
   };
 
@@ -141,9 +166,15 @@ const ImageEditor = () => {
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
-      data[i] = r * (1 - warmth / 100) + (r * 0.393 + g * 0.769 + b * 0.189) * (warmth / 100); // Red
-      data[i + 1] = g * (1 - warmth / 100) + (r * 0.349 + g * 0.686 + b * 0.168) * (warmth / 100); // Green
-      data[i + 2] = b * (1 - warmth / 100) + (r * 0.272 + g * 0.534 + b * 0.131) * (warmth / 100); // Blue
+      data[i] =
+        r * (1 - warmth / 100) +
+        (r * 0.393 + g * 0.769 + b * 0.189) * (warmth / 100); // Red
+      data[i + 1] =
+        g * (1 - warmth / 100) +
+        (r * 0.349 + g * 0.686 + b * 0.168) * (warmth / 100); // Green
+      data[i + 2] =
+        b * (1 - warmth / 100) +
+        (r * 0.272 + g * 0.534 + b * 0.131) * (warmth / 100); // Blue
     }
   };
 
@@ -176,7 +207,10 @@ const ImageEditor = () => {
             }
           }
           const idx = (y * width + x) * 4 + c;
-          data[idx] = Math.min(255, Math.max(0, data[idx] + sum * (sharpness / 100)));
+          data[idx] = Math.min(
+            255,
+            Math.max(0, data[idx] + sum * (sharpness / 100))
+          );
         }
       }
     }
@@ -201,7 +235,6 @@ const ImageEditor = () => {
     ctx.putImageData(imageData, 0, 0);
   };
 
-  // Draw the image with filters and transformations
   const drawImageWithFilters = useCallback(() => {
     if (!image) return; // Avoid drawing if no image is loaded.
 
@@ -235,16 +268,24 @@ const ImageEditor = () => {
     ctx.restore();
 
     // Add text overlay
-    if (text) {
-      ctx.font = "48px Arial";
-      ctx.fillStyle = "white";
+    if (textProperties.text) {
+      ctx.save();
+      ctx.font = `${textProperties.fontWeight} ${textProperties.fontSize}px ${textProperties.font}`;
+      ctx.fillStyle = textProperties.color;
+      ctx.globalAlpha = textProperties.opacity; // Apply opacity
       ctx.textAlign = "center";
-      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      ctx.textBaseline = "middle";
+
+      // Apply text rotation
+      ctx.translate(textProperties.x, textProperties.y);
+      ctx.rotate((textProperties.rotation * Math.PI) / 180);
+      ctx.fillText(textProperties.text, 0, 0);
+      ctx.restore();
     }
 
     // Update editedImage for saving
     setEditedImage(canvas.toDataURL());
-  }, [image, rotation, filters, text]);
+  }, [image, rotation, filters, textProperties]);
 
   useEffect(() => {
     if (image) {
@@ -262,8 +303,11 @@ const ImageEditor = () => {
     setFilters(newFilters);
   };
 
-  const handleTextChange = (e) => {
-    setText(e.target.value);
+  const handleTextChange = (property, value) => {
+    setTextProperties((prev) => ({
+      ...prev,
+      [property]: value,
+    }));
   };
 
   const handleSave = () => {
@@ -421,12 +465,81 @@ const ImageEditor = () => {
     }
   };
 
+  const handleCrop = () => {
+    setIsCropping(true);
+    setActiveControl("crop");
+    const canvas = canvasRef.current;
+    if (canvas) {
+      setCropRect({
+        x: canvas.width * 0.05,
+        y: canvas.height * 0.05,
+        width: canvas.width * 0.3,
+        height: canvas.height * 0.3,
+      });
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+
+    setCropRect((prev) => ({
+      ...prev,
+      x: prev.x + dx,
+      y: prev.y + dy,
+    }));
+
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Handle save crop
+  const handleSaveCrop = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    // Crop the image
+    const imageData = ctx.getImageData(
+      cropRect.x,
+      cropRect.y,
+      cropRect.width,
+      cropRect.height
+    );
+    canvas.width = cropRect.width;
+    canvas.height = cropRect.height;
+    ctx.putImageData(imageData, 0, 0);
+
+    // Reset cropping state
+    setIsCropping(false);
+    setActiveControl(null);
+    setEditedImage(canvas.toDataURL());
+  };
+
+  // Handle discard crop
+  const handleDiscardCrop = () => {
+    setIsCropping(false);
+    setActiveControl(null);
+    drawOriginalImage(image); // Reset to the original image
+  };
+
   const renderAdjustSettings = () => (
     <div className="control-group">
       <h3>Adjust Settings</h3>
       {Object.entries(filters).map(([filter, value]) => (
         <div key={filter} className="filter-control">
-          <label className="filter-label">{filter.charAt(0).toUpperCase() + filter.slice(1)}</label>
+          <label className="filter-label">
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </label>
           <input
             type="range"
             min={filter === "hue" ? "-180" : "0"}
@@ -435,14 +548,21 @@ const ImageEditor = () => {
             onChange={(e) => handleFilterChange(filter, e.target.value)}
             className="slider-input"
           />
-          <span className="filter-value">{value}{filter === "hue" ? "°" : "%"}</span>
+          <span className="filter-value">
+            {value}
+            {filter === "hue" ? "°" : "%"}
+          </span>
         </div>
       ))}
     </div>
   );
 
   const renderControlSection = () => {
-    if (activeControl === "reset" || activeControl === "crop" || activeControl === "rotate") {
+    if (
+      activeControl === "reset" ||
+      activeControl === "crop" ||
+      activeControl === "rotate"
+    ) {
       return null; // Hide controls section
     }
 
@@ -455,29 +575,136 @@ const ImageEditor = () => {
               <button onClick={() => applyPresetFilter("warm")}>Warm</button>
               <button onClick={() => applyPresetFilter("vivid")}>Vivid</button>
               <button onClick={() => applyPresetFilter("cool")}>Cool</button>
-              <button onClick={() => applyPresetFilter("grayscale")}>Grayscale</button>
+              <button onClick={() => applyPresetFilter("grayscale")}>
+                Grayscale
+              </button>
               <button onClick={() => applyPresetFilter("sepia")}>Sepia</button>
-              <button onClick={() => applyPresetFilter("high-contrast")}>High Contrast</button>
-              <button onClick={() => applyPresetFilter("low-contrast")}>Low Contrast</button>
-              <button onClick={() => applyPresetFilter("vintage")}>Vintage</button>
-              <button onClick={() => applyPresetFilter("dreamy")}>Dreamy</button>
-              <button onClick={() => applyPresetFilter("dramatic")}>Dramatic</button>
+              <button onClick={() => applyPresetFilter("high-contrast")}>
+                High Contrast
+              </button>
+              <button onClick={() => applyPresetFilter("low-contrast")}>
+                Low Contrast
+              </button>
+              <button onClick={() => applyPresetFilter("vintage")}>
+                Vintage
+              </button>
+              <button onClick={() => applyPresetFilter("dreamy")}>
+                Dreamy
+              </button>
+              <button onClick={() => applyPresetFilter("dramatic")}>
+                Dramatic
+              </button>
             </div>
           </div>
         );
-      case "text":
-        return (
-          <div className="control-group">
-            <h3>Add Text</h3>
-            <input
-              type="text"
-              value={text}
-              onChange={handleTextChange}
-              placeholder="Enter text"
-              className="text-input"
-            />
-          </div>
-        );
+        case "text":
+            return (
+              <div className="control-group">
+                <h3>Add Text</h3>
+                <div className="text-controls">
+                  {/* Text Input */}
+                  <div className="text-control">
+                    <label>Text</label>
+                    <input
+                      className="input"
+                      type="text"
+                      value={textProperties.text}
+                      onChange={(e) => handleTextChange("text", e.target.value)}
+                      placeholder="Enter text"
+                    />
+                  </div>
+          
+                  {/* X Coordinate */}
+                  <div className="text-control">
+                    <label>X Coordinate</label>
+                    <input
+                      type="number"
+                      value={textProperties.x}
+                      onChange={(e) => handleTextChange("x", parseInt(e.target.value))}
+                    />
+                  </div>
+          
+                  {/* Y Coordinate */}
+                  <div className="text-control">
+                    <label>Y Coordinate</label>
+                    <input
+                      type="number"
+                      value={textProperties.y}
+                      onChange={(e) => handleTextChange("y", parseInt(e.target.value))}
+                    />
+                  </div>
+          
+                  {/* Rotation */}
+                  <div className="text-control">
+                    <label>Rotation (degrees)</label>
+                    <input
+                      type="number"
+                      value={textProperties.rotation}
+                      onChange={(e) => handleTextChange("rotation", parseInt(e.target.value))}
+                    />
+                  </div>
+          
+                  {/* Opacity */}
+                  <div className="text-control">
+                    <label>Opacity</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="1"
+                      value={textProperties.opacity}
+                      onChange={(e) => handleTextChange("opacity", parseFloat(e.target.value))}
+                    />
+                  </div>
+          
+                  {/* Font */}
+                  <div className="text-control">
+                    <label>Font</label>
+                    <select
+                      value={textProperties.font}
+                      onChange={(e) => handleTextChange("font", e.target.value)}
+                    >
+                      <option value="Arial">Arial</option>
+                      <option value="Times New Roman">Times New Roman</option>
+                      <option value="Courier New">Courier New</option>
+                      <option value="Verdana">Verdana</option>
+                    </select>
+                  </div>
+          
+                  {/* Color */}
+                  <div className="text-control">
+                    <label>Color</label>
+                    <input
+                      type="color"
+                      value={textProperties.color}
+                      onChange={(e) => handleTextChange("color", e.target.value)}
+                    />
+                  </div>
+          
+                  {/* Font Weight */}
+                  <div className="text-control">
+                    <label>Font Weight</label>
+                    <select
+                      value={textProperties.fontWeight}
+                      onChange={(e) => handleTextChange("fontWeight", e.target.value)}
+                    >
+                      <option value="normal">Normal</option>
+                      <option value="bold">Bold</option>
+                    </select>
+                  </div>
+          
+                  {/* Font Size */}
+                  <div className="text-control">
+                    <label>Font Size</label>
+                    <input
+                      type="number"
+                      value={textProperties.fontSize}
+                      onChange={(e) => handleTextChange("fontSize", parseInt(e.target.value))}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
       case "settings":
         return renderAdjustSettings();
       default:
@@ -507,7 +734,9 @@ const ImageEditor = () => {
       <div className="controls">
         <Tooltip title="Add Text">
           <button
-            className={`control-tab add-text ${activeControl === "text" ? "active" : ""}`}
+            className={`control-tab add-text ${
+              activeControl === "text" ? "active" : ""
+            }`}
             onClick={() => setActiveControl("text")}
           >
             <TextFieldsIcon />
@@ -515,7 +744,9 @@ const ImageEditor = () => {
         </Tooltip>
         <Tooltip title="Apply Filters">
           <button
-            className={`control-tab apply-filters ${activeControl === "filters" ? "active" : ""}`}
+            className={`control-tab apply-filters ${
+              activeControl === "filters" ? "active" : ""
+            }`}
             onClick={() => setActiveControl("filters")}
           >
             <FilterIcon />
@@ -523,7 +754,9 @@ const ImageEditor = () => {
         </Tooltip>
         <Tooltip title="Adjust Settings">
           <button
-            className={`control-tab adjust ${activeControl === "settings" ? "active" : ""}`}
+            className={`control-tab adjust ${
+              activeControl === "settings" ? "active" : ""
+            }`}
             onClick={() => setActiveControl("settings")}
           >
             <TuneIcon />
@@ -531,29 +764,25 @@ const ImageEditor = () => {
         </Tooltip>
         <Tooltip title="Crop Image">
           <button
-            className={`control-tab crop ${activeControl === "crop" ? "active" : ""}`}
-            onClick={() => setActiveControl("crop")}
+            className={`control-tab crop ${
+              activeControl === "crop" ? "active" : ""
+            }`}
+            onClick={handleCrop}
           >
             <CropIcon />
           </button>
         </Tooltip>
         <Tooltip title="Rotate Image">
           <button
-            className={`control-tab rotate ${activeControl === "rotate" ? "active" : ""}`}
+            className={`control-tab rotate ${
+              activeControl === "rotate" ? "active" : ""
+            }`}
             onClick={() => {
               setActiveControl("rotate");
               handleRotate();
             }}
           >
             <RotateRightIcon />
-          </button>
-        </Tooltip>
-        <Tooltip title="Resize Image">
-          <button
-            className={`control-tab resize ${activeControl === "resize" ? "active" : ""}`}
-            onClick={() => setActiveControl("resize")}
-          >
-            <ResizeIcon />
           </button>
         </Tooltip>
         <Tooltip title="Reset Changes">
@@ -586,7 +815,37 @@ const ImageEditor = () => {
       <div className="editor-layout">
         {/* Left: Canvas */}
         <div className="canvas-container">
-          <canvas ref={canvasRef} className="editor-canvas" />
+          <canvas
+            ref={canvasRef}
+            className="editor-canvas"
+            onMouseDown={isCropping ? handleMouseDown : null}
+            onMouseMove={isCropping ? handleMouseMove : null}
+            onMouseUp={isCropping ? handleMouseUp : null}
+          />
+          {isCropping && (
+            <div
+              className="crop-rectangle"
+              style={{
+                left: cropRect.x,
+                top: cropRect.y,
+                width: cropRect.width,
+                height: cropRect.height,
+              }}
+            />
+          )}
+          {isCropping && (
+            <div className="crop-buttons">
+              <button onClick={handleSaveCrop} className="crop-button save">
+                <CheckIcon />
+              </button>
+              <button
+                onClick={handleDiscardCrop}
+                className="crop-button discard"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+          )}
           <input
             type="file"
             ref={fileInputRef}
@@ -599,7 +858,15 @@ const ImageEditor = () => {
         {/* Right: Controls */}
         <div
           className="controls-section"
-          style={{ display: activeControl === "reset" || activeControl === "crop" || activeControl === "rotate" || activeControl === null ? "none" : "block" }}
+          style={{
+            display:
+              activeControl === "reset" ||
+              activeControl === "crop" ||
+              activeControl === "rotate" ||
+              activeControl === null
+                ? "none"
+                : "block",
+          }}
         >
           {renderControlSection()}
         </div>
