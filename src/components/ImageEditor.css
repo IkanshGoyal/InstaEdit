@@ -326,6 +326,7 @@
   z-index: 1;
   background: #0f2557;
   position: relative;
+  font-family: Chalkboard;
   font-weight: 1000;
   font-size: 17px;
   -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
