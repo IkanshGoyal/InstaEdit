@@ -17,17 +17,18 @@ const ImageEditor = () => {
   const [editedImage, setEditedImage] = useState(null);
   const [text, setText] = useState("");
   const [filters, setFilters] = useState({
-    brightness: 100,
-    contrast: 100,
-    exposure: 100,
-    shadows: 100,
-    highlights: 100,
-    hue: 0,
-    saturation: 100,
-    warmth: 100,
-    vibrance: 100,
-    sharpness: 100,
+    brightness: 100,   // Default: 100% (neutral brightness)
+    exposure: 100,       // Keep 100
+    shadows: 100,        // Default: 100 
+    highlights: 100,     // Default: 100
+    saturation: 100,   // Default: 100
+    warmth: 0,         // Keep 0 Dont change at all
+    vibrance: 0,       // Keep 0 Dont change at all
+    sharpness: 0,      // Keep 0 Dont change at all
+    hue: 0,            // Default: 0 degrees (no hue shift)
+    contrast: 0,     // Default: 0
   });
+  
   const [textProperties, setTextProperties] = useState({
     text: "",
     x: 50,
@@ -220,17 +221,18 @@ const ImageEditor = () => {
   const applyFilters = (ctx, width, height) => {
     const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
-
+    
     applyBrightness(data, filters.brightness);
     applyContrast(data, filters.contrast);
     applyExposure(data, filters.exposure);
     applyShadows(data, filters.shadows);
     applyHighlights(data, filters.highlights);
+    applySharpness(data, width, height, filters.sharpness);
     applySaturation(data, filters.saturation);
+    
     applyHue(data, filters.hue);
     applyWarmth(data, filters.warmth);
     applyVibrance(data, filters.vibrance);
-    applySharpness(data, width, height, filters.sharpness);
 
     ctx.putImageData(imageData, 0, 0);
   };
@@ -790,16 +792,16 @@ const ImageEditor = () => {
             className="control-tab"
             onClick={() => {
               setFilters({
-                brightness: 100,
-                contrast: 100,
-                exposure: 100,
-                shadows: 100,
-                highlights: 100,
-                hue: 0,
-                saturation: 100,
-                warmth: 100,
-                vibrance: 100,
-                sharpness: 100,
+                brightness: 100,   // Default: 100% (neutral brightness)
+                exposure: 100,       // Keep 100
+                shadows: 100,        // Default: 100 
+                highlights: 100,     // Default: 100
+                saturation: 100,   // Default: 100
+                warmth: 0,         // Keep 0 Dont change at all
+                vibrance: 0,       // Keep 0 Dont change at all
+                sharpness: 0,      // Keep 0 Dont change at all
+                hue: 0,            // Default: 0 degrees (no hue shift)
+                contrast: 0,     // Default: 0
               });
               setText("");
               setActiveControl("reset");
