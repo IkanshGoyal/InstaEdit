@@ -10,14 +10,22 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import Tooltip from "@mui/material/Tooltip";
 
 const ImageEditor = () => {
-  const [activeControl, setActiveControl] = useState(null); // Default: no tab selected
+  const [activeControl, setActiveControl] = useState(null);
+  const [rotation, setRotation] = useState(0);
   const [image, setImage] = useState(null);
   const [editedImage, setEditedImage] = useState(null);
   const [text, setText] = useState("");
   const [filters, setFilters] = useState({
     brightness: 100,
-    saturation: 100,
     contrast: 100,
+    exposure: 100,
+    shadows: 100,
+    highlights: 100,
+    hue: 0,
+    saturation: 100,
+    warmth: 100,
+    vibrance: 100,
+    sharpness: 100,
   });
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -41,22 +49,42 @@ const ImageEditor = () => {
   const drawImage = (img) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-
+  
     canvas.width = img.width;
     canvas.height = img.height;
+  
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.filter = `brightness(${filters.brightness}%) saturate(${filters.saturation}%) contrast(${filters.contrast}%)`;
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.filter = `
+    brightness(${filters.brightness}%) 
+    contrast(${filters.contrast}%) 
+    saturate(${filters.saturation}%) 
+    hue-rotate(${filters.hue}deg) 
+    sepia(${filters.warmth}%) 
+    grayscale(${100 - filters.vibrance}%) 
+    blur(${filters.sharpness / 10}px)
+  `;
+    ctx.drawImage(img, -img.width / 2, -img.height / 2, canvas.width, canvas.height);
+    ctx.restore();
+  
     if (text) {
       ctx.font = "48px Arial";
       ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
       ctx.textAlign = "center";
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     }
-
+  
     setEditedImage(canvas.toDataURL());
+  };
+
+  const handleRotate = () => {
+    const newRotation = (rotation + 90) % 360; 
+    setRotation(newRotation);
+    if (image) {
+      drawImage(image);
+    }
   };
 
   const handleFilterChange = (type, value) => {
@@ -80,6 +108,26 @@ const ImageEditor = () => {
     link.href = editedImage;
     link.click();
   };
+
+  const renderAdjustSettings = () => (
+    <div className="control-group">
+      <h3>Adjust Settings</h3>
+      {Object.entries(filters).map(([filter, value]) => (
+        <div key={filter} className="filter-control">
+          <label className="filter-label">{filter.charAt(0).toUpperCase() + filter.slice(1)}</label>
+          <input
+            type="range"
+            min={filter === "hue" ? "-180" : "0"}
+            max={filter === "hue" ? "180" : "200"}
+            value={value}
+            onChange={(e) => handleFilterChange(filter, e.target.value)}
+            className="slider-input"
+          />
+          <span className="filter-value">{value}{filter === "hue" ? "°" : "%"}</span>
+        </div>
+      ))}
+    </div>
+  );
 
   const renderControlSection = () => {
     if (activeControl === "reset" || activeControl === "crop" || activeControl === "rotate") {
@@ -120,6 +168,8 @@ const ImageEditor = () => {
             />
           </div>
         );
+        case "settings":
+            return renderAdjustSettings();
       default:
         return null;
     }
@@ -180,7 +230,10 @@ const ImageEditor = () => {
         <Tooltip title="Rotate Image">
           <button
             className={`control-tab rotate ${activeControl === "rotate" ? "active" : ""}`}
-            onClick={() => setActiveControl("rotate")}
+            onClick={() => {
+                setActiveControl("rotate");
+                handleRotate();
+              }}
           >
             <RotateRightIcon />
           </button>
@@ -197,9 +250,23 @@ const ImageEditor = () => {
           <button
             className="control-tab"
             onClick={() => {
-              setFilters({ brightness: 100, saturation: 100, contrast: 100 });
+              setFilters({ 
+                brightness: 100,
+                contrast: 100,
+                exposure: 100,
+                shadows: 100,
+                highlights: 100,
+                hue: 0,
+                saturation: 100,
+                warmth: 100,
+                vibrance: 100,
+                sharpness: 100, });
               setText("");
               setActiveControl("reset");
+              setRotation(0);
+              if (image) {
+                drawImage(image);
+              }
             }}
           >
             <RefreshIcon />
