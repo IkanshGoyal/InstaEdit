@@ -53,7 +53,7 @@
 }
 
 .controls div {
-  padding: 0 20px;
+  padding: 0 40px;
 }
 
 .canvas-container {
@@ -190,7 +190,7 @@
 }
 
 .editor-canvas {
-  max-width: 90%;
+  max-width: 80%;
   border: 0px;
   height: 100%;
 }

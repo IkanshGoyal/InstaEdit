@@ -5,11 +5,12 @@ import FilterIcon from "@mui/icons-material/Filter";
 import TuneIcon from "@mui/icons-material/Tune";
 import CropIcon from "@mui/icons-material/Crop";
 import RotateRightIcon from "@mui/icons-material/RotateRight";
+import ResizeIcon from "@mui/icons-material/AspectRatio";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Tooltip from "@mui/material/Tooltip";
 
 const ImageEditor = () => {
-  const [activeControl, setActiveControl] = useState("filters");
+  const [activeControl, setActiveControl] = useState(null); // Default: no tab selected
   const [image, setImage] = useState(null);
   const [editedImage, setEditedImage] = useState(null);
   const [text, setText] = useState("");
@@ -81,6 +82,10 @@ const ImageEditor = () => {
   };
 
   const renderControlSection = () => {
+    if (activeControl === "reset" || activeControl === "crop" || activeControl === "rotate") {
+      return null; // Hide controls section
+    }
+
     switch (activeControl) {
       case "filters":
         return (
@@ -142,7 +147,7 @@ const ImageEditor = () => {
       <div className="controls">
         <Tooltip title="Add Text">
           <button
-            className={`control-tab ${activeControl === "text" ? "active" : ""}`}
+            className={`control-tab add-text ${activeControl === "text" ? "active" : ""}`}
             onClick={() => setActiveControl("text")}
           >
             <TextFieldsIcon />
@@ -150,14 +155,53 @@ const ImageEditor = () => {
         </Tooltip>
         <Tooltip title="Apply Filters">
           <button
-            className={`control-tab ${activeControl === "filters" ? "active" : ""}`}
+            className={`control-tab apply-filters ${activeControl === "filters" ? "active" : ""}`}
             onClick={() => setActiveControl("filters")}
           >
             <FilterIcon />
           </button>
         </Tooltip>
+        <Tooltip title="Adjust Settings">
+          <button
+            className={`control-tab adjust ${activeControl === "settings" ? "active" : ""}`}
+            onClick={() => setActiveControl("settings")}
+          >
+            <TuneIcon />
+          </button>
+        </Tooltip>
+        <Tooltip title="Crop Image">
+          <button
+            className={`control-tab crop ${activeControl === "crop" ? "active" : ""}`}
+            onClick={() => setActiveControl("crop")}
+          >
+            <CropIcon />
+          </button>
+        </Tooltip>
+        <Tooltip title="Rotate Image">
+          <button
+            className={`control-tab rotate ${activeControl === "rotate" ? "active" : ""}`}
+            onClick={() => setActiveControl("rotate")}
+          >
+            <RotateRightIcon />
+          </button>
+        </Tooltip>
+        <Tooltip title="Resize Image">
+          <button
+            className={`control-tab resize ${activeControl === "resize" ? "active" : ""}`}
+            onClick={() => setActiveControl("resize")}
+          >
+            <ResizeIcon />
+          </button>
+        </Tooltip>
         <Tooltip title="Reset Changes">
-          <button className="control-tab" onClick={() => setFilters({ brightness: 100, saturation: 100, contrast: 100 })}>
+          <button
+            className="control-tab"
+            onClick={() => {
+              setFilters({ brightness: 100, saturation: 100, contrast: 100 });
+              setText("");
+              setActiveControl("reset");
+            }}
+          >
             <RefreshIcon />
           </button>
         </Tooltip>
@@ -178,7 +222,12 @@ const ImageEditor = () => {
         </div>
 
         {/* Right: Controls */}
-        <div className="controls-section">{renderControlSection()}</div>
+        <div
+          className="controls-section"
+          style={{ display: activeControl === "reset" || activeControl === "crop" || activeControl === "rotate" || activeControl === null ? "none" : "block" }}
+        >
+          {renderControlSection()}
+        </div>
       </div>
     </div>
   );
