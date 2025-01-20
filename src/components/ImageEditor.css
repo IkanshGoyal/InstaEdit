@@ -59,6 +59,8 @@
 .canvas-container {
   margin: 20px 0;
   text-align: center;
+  max-width: fit-content;
+  max-height: fit-content;
 }
 
 .editor-canvas {
@@ -269,6 +271,8 @@
   resize: both; /* Allow resizing */
   overflow: auto; /* Enable resize handles */
   pointer-events: all; /* Ensure the rectangle can be interacted with */
+  width: fit-content; /* Default width fits content */
+  height: fit-content; /* Default height fits content */
 }
 
 .crop-rectangle::after {
@@ -279,6 +283,7 @@
   right: 0;
   bottom: 0;
   border: 2px dashed #000; /* Black dashed border for contrast */
+  
 }
 
 .crop-buttons {

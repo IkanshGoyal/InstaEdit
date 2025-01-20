@@ -473,8 +473,12 @@ const ImageEditor = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       setCropRect({
-        x: canvas.width * 0.05,
-        y: canvas.height * 0.05,
+        // x: canvas.width * 0.05, // Why exactly did we do this?
+        // y: canvas.height * 0.05, // Why exactly did we do this?
+        x: 0,
+        y: 0,
+        // width: canvas.width * 0.3,
+        // height: canvas.height * 0.3,
         width: canvas.width * 0.3,
         height: canvas.height * 0.3,
       });
@@ -828,12 +832,15 @@ const ImageEditor = () => {
             <div
               className="crop-rectangle"
               style={{
-                left: cropRect.x,
-                top: cropRect.y,
-                width: cropRect.width,
-                height: cropRect.height,
+                left: `${cropRect.x}px`,
+                top: `${cropRect.y}px`,
+                width: `${cropRect.width}px`,
+                height: `${cropRect.height}px`,
               }}
-            />
+            >
+
+              {console.log('Crop Rect:', cropRect)} </div>
+            
           )}
           {isCropping && (
             <div className="crop-buttons">
