@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./ImageEditor.css";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import FilterIcon from "@mui/icons-material/Filter";
@@ -11,22 +12,23 @@ import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
 
 const ImageEditor = () => {
+  const navigate = useNavigate();
   const [activeControl, setActiveControl] = useState(null);
   const [rotation, setRotation] = useState(0);
   const [image, setImage] = useState(null);
   const [editedImage, setEditedImage] = useState(null);
-  const [text, setText] = useState("");
+
   const [filters, setFilters] = useState({
-    brightness: 100,   // Default: 100% (neutral brightness)
-    exposure: 100,       // Keep 100
-    shadows: 100,        // Default: 100 
-    highlights: 100,     // Default: 100
-    saturation: 100,   // Default: 100
-    warmth: 0,         // Keep 0 Dont change at all
-    vibrance: 0,       // Keep 0 Dont change at all
-    sharpness: 0,      // Keep 0 Dont change at all
-    hue: 0,            // Default: 0 degrees (no hue shift)
-    contrast: 0,     // Default: 0
+    brightness: 100,   
+    exposure: 100,       
+    shadows: 100,        
+    highlights: 100,     
+    saturation: 100,   
+    warmth: 0,         
+    vibrance: 0,       
+    sharpness: 0,     
+    hue: 0,           
+    contrast: 0,    
   });
   
   const [textProperties, setTextProperties] = useState({
@@ -56,89 +58,81 @@ const ImageEditor = () => {
         img.src = event.target.result;
         img.onload = () => {
           setImage(img);
-          drawOriginalImage(img); // Draw the original image without filters
+          drawOriginalImage(img); 
         };
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Draw the original image without filters or transformations
+  const handleHome = () => {
+    navigate('/');
+  };
+
   const drawOriginalImage = (img) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    // Set canvas dimensions to match the image
     canvas.width = img.width;
     canvas.height = img.height;
 
-    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw the original image
     ctx.drawImage(img, 0, 0);
 
-    // Save the original image data
     setEditedImage(canvas.toDataURL());
   };
 
-  // Apply brightness to pixel data
   const applyBrightness = (data, brightness) => {
     for (let i = 0; i < data.length; i += 4) {
-      data[i] = data[i] * (brightness / 100); // Red
-      data[i + 1] = data[i + 1] * (brightness / 100); // Green
-      data[i + 2] = data[i + 2] * (brightness / 100); // Blue
+      data[i] = data[i] * (brightness / 100); 
+      data[i + 1] = data[i + 1] * (brightness / 100); 
+      data[i + 2] = data[i + 2] * (brightness / 100); 
     }
   };
 
-  // Apply contrast to pixel data
   const applyContrast = (data, contrast) => {
     const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
     for (let i = 0; i < data.length; i += 4) {
-      data[i] = factor * (data[i] - 128) + 128; // Red
-      data[i + 1] = factor * (data[i + 1] - 128) + 128; // Green
-      data[i + 2] = factor * (data[i + 2] - 128) + 128; // Blue
+      data[i] = factor * (data[i] - 128) + 128; 
+      data[i + 1] = factor * (data[i + 1] - 128) + 128; 
+      data[i + 2] = factor * (data[i + 2] - 128) + 128; 
     }
   };
 
-  // Apply exposure to pixel data
   const applyExposure = (data, exposure) => {
     for (let i = 0; i < data.length; i += 4) {
-      data[i] = data[i] * (exposure / 100); // Red
-      data[i + 1] = data[i + 1] * (exposure / 100); // Green
-      data[i + 2] = data[i + 2] * (exposure / 100); // Blue
+      data[i] = data[i] * (exposure / 100); 
+      data[i + 1] = data[i + 1] * (exposure / 100); 
+      data[i + 2] = data[i + 2] * (exposure / 100); 
     }
   };
 
-  // Apply shadows to pixel data
   const applyShadows = (data, shadows) => {
     for (let i = 0; i < data.length; i += 4) {
-      if (data[i] < 128) data[i] = data[i] * (shadows / 100); // Red
-      if (data[i + 1] < 128) data[i + 1] = data[i + 1] * (shadows / 100); // Green
-      if (data[i + 2] < 128) data[i + 2] = data[i + 2] * (shadows / 100); // Blue
+      if (data[i] < 128) data[i] = data[i] * (shadows / 100);
+      if (data[i + 1] < 128) data[i + 1] = data[i + 1] * (shadows / 100); 
+      if (data[i + 2] < 128) data[i + 2] = data[i + 2] * (shadows / 100); 
     }
   };
 
-  // Apply highlights to pixel data
   const applyHighlights = (data, highlights) => {
     for (let i = 0; i < data.length; i += 4) {
-      if (data[i] >= 128) data[i] = data[i] * (highlights / 100); // Red
-      if (data[i + 1] >= 128) data[i + 1] = data[i + 1] * (highlights / 100); // Green
-      if (data[i + 2] >= 128) data[i + 2] = data[i + 2] * (highlights / 100); // Blue
+      if (data[i] >= 128) data[i] = data[i] * (highlights / 100); 
+      if (data[i + 1] >= 128) data[i + 1] = data[i + 1] * (highlights / 100); 
+      if (data[i + 2] >= 128) data[i + 2] = data[i + 2] * (highlights / 100); 
     }
   };
 
-  // Apply saturation to pixel data
   const applySaturation = (data, saturation) => {
     for (let i = 0; i < data.length; i += 4) {
       const gray = 0.2989 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-      data[i] = gray + (data[i] - gray) * (saturation / 100); // Red
-      data[i + 1] = gray + (data[i + 1] - gray) * (saturation / 100); // Green
-      data[i + 2] = gray + (data[i + 2] - gray) * (saturation / 100); // Blue
+      data[i] = gray + (data[i] - gray) * (saturation / 100); 
+      data[i + 1] = gray + (data[i + 1] - gray) * (saturation / 100); 
+      data[i + 2] = gray + (data[i + 2] - gray) * (saturation / 100); 
     }
   };
 
-  // Apply hue rotation to pixel data
   const applyHue = (data, hue) => {
     const cos = Math.cos((hue * Math.PI) / 180);
     const sin = Math.sin((hue * Math.PI) / 180);
@@ -161,7 +155,6 @@ const ImageEditor = () => {
     }
   };
 
-  // Apply warmth (sepia) to pixel data
   const applyWarmth = (data, warmth) => {
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i];
@@ -169,27 +162,25 @@ const ImageEditor = () => {
       const b = data[i + 2];
       data[i] =
         r * (1 - warmth / 100) +
-        (r * 0.393 + g * 0.769 + b * 0.189) * (warmth / 100); // Red
+        (r * 0.393 + g * 0.769 + b * 0.189) * (warmth / 100); 
       data[i + 1] =
         g * (1 - warmth / 100) +
-        (r * 0.349 + g * 0.686 + b * 0.168) * (warmth / 100); // Green
+        (r * 0.349 + g * 0.686 + b * 0.168) * (warmth / 100); 
       data[i + 2] =
         b * (1 - warmth / 100) +
-        (r * 0.272 + g * 0.534 + b * 0.131) * (warmth / 100); // Blue
+        (r * 0.272 + g * 0.534 + b * 0.131) * (warmth / 100); 
     }
   };
 
-  // Apply vibrance to pixel data
   const applyVibrance = (data, vibrance) => {
     for (let i = 0; i < data.length; i += 4) {
       const max = Math.max(data[i], data[i + 1], data[i + 2]);
-      data[i] = data[i] + (max - data[i]) * (vibrance / 100); // Red
-      data[i + 1] = data[i + 1] + (max - data[i + 1]) * (vibrance / 100); // Green
-      data[i + 2] = data[i + 2] + (max - data[i + 2]) * (vibrance / 100); // Blue
+      data[i] = data[i] + (max - data[i]) * (vibrance / 100); 
+      data[i + 1] = data[i + 1] + (max - data[i + 1]) * (vibrance / 100); 
+      data[i + 2] = data[i + 2] + (max - data[i + 2]) * (vibrance / 100); 
     }
   };
 
-  // Apply sharpness to pixel data (simple edge detection)
   const applySharpness = (data, width, height, sharpness) => {
     const kernel = [
       [0, -1, 0],
@@ -217,11 +208,10 @@ const ImageEditor = () => {
     }
   };
 
-  // Apply all filters to the image
-  const applyFilters = (ctx, width, height) => {
+  const applyFilters = useCallback((ctx, width, height) => {
     const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
-    
+  
     applyBrightness(data, filters.brightness);
     applyContrast(data, filters.contrast);
     applyExposure(data, filters.exposure);
@@ -229,65 +219,55 @@ const ImageEditor = () => {
     applyHighlights(data, filters.highlights);
     applySharpness(data, width, height, filters.sharpness);
     applySaturation(data, filters.saturation);
-    
     applyHue(data, filters.hue);
     applyWarmth(data, filters.warmth);
     applyVibrance(data, filters.vibrance);
-
+  
     ctx.putImageData(imageData, 0, 0);
-  };
-
+  }, [filters]);
+  
   const drawImageWithFilters = useCallback(() => {
-    if (!image) return; // Avoid drawing if no image is loaded.
-
+    if (!image) return;
+  
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-
-    // Calculate new dimensions to accommodate rotation
+  
     const absCos = Math.abs(Math.cos((rotation * Math.PI) / 180));
     const absSin = Math.abs(Math.sin((rotation * Math.PI) / 180));
     const rotatedWidth = image.width * absCos + image.height * absSin;
     const rotatedHeight = image.width * absSin + image.height * absCos;
-
-    // Update canvas size
+  
     canvas.width = rotatedWidth;
     canvas.height = rotatedHeight;
-
-    // Clear the canvas
+  
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Apply transformations
+  
     ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2); // Center the image
+    ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.rotate((rotation * Math.PI) / 180);
-
-    // Draw the image
+  
     ctx.drawImage(image, -image.width / 2, -image.height / 2);
-
-    // Apply filters
+  
     applyFilters(ctx, canvas.width, canvas.height);
-
+  
     ctx.restore();
-
-    // Add text overlay
+  
     if (textProperties.text) {
       ctx.save();
       ctx.font = `${textProperties.fontWeight} ${textProperties.fontSize}px ${textProperties.font}`;
       ctx.fillStyle = textProperties.color;
-      ctx.globalAlpha = textProperties.opacity; // Apply opacity
+      ctx.globalAlpha = textProperties.opacity;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-
-      // Apply text rotation
+  
       ctx.translate(textProperties.x, textProperties.y);
       ctx.rotate((textProperties.rotation * Math.PI) / 180);
       ctx.fillText(textProperties.text, 0, 0);
       ctx.restore();
     }
-
-    // Update editedImage for saving
+  
     setEditedImage(canvas.toDataURL());
-  }, [image, rotation, filters, textProperties]);
+  }, [image, rotation, textProperties, applyFilters]);
 
   useEffect(() => {
     if (image) {
@@ -319,147 +299,146 @@ const ImageEditor = () => {
     link.click();
   };
 
-  // Preset filters
   const applyPresetFilter = (preset) => {
     switch (preset) {
       case "warm":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 120,
           warmth: 120,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "vivid":
         setFilters({
           brightness: 100,
-          contrast: 120,
+          contrast: 20,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 150,
           warmth: 100,
-          vibrance: 150,
-          sharpness: 100,
+          vibrance: 50,
+          sharpness: 0,
         });
         break;
       case "cool":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 200,
           saturation: 100,
           warmth: 80,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "grayscale":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 0,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "sepia":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 100,
           warmth: 150,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "high-contrast":
         setFilters({
           brightness: 100,
-          contrast: 150,
+          contrast: 50,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 100,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "low-contrast":
         setFilters({
           brightness: 100,
-          contrast: 80,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 100,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "vintage":
         setFilters({
           brightness: 90,
-          contrast: 90,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 30,
           saturation: 80,
           warmth: 120,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "dreamy":
         setFilters({
           brightness: 110,
-          contrast: 90,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 120,
           warmth: 100,
-          vibrance: 120,
-          sharpness: 80,
+          vibrance: 20,
+          sharpness: 0,
         });
         break;
       case "dramatic":
         setFilters({
           brightness: 90,
-          contrast: 120,
+          contrast: 20,
           exposure: 100,
           shadows: 120,
           highlights: 80,
           hue: 0,
           saturation: 100,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       default:
@@ -509,12 +488,10 @@ const ImageEditor = () => {
     setIsDragging(false);
   };
 
-  // Handle save crop
   const handleSaveCrop = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    // Crop the image
     const imageData = ctx.getImageData(
       cropRect.x,
       cropRect.y,
@@ -525,17 +502,15 @@ const ImageEditor = () => {
     canvas.height = cropRect.height;
     ctx.putImageData(imageData, 0, 0);
 
-    // Reset cropping state
     setIsCropping(false);
     setActiveControl(null);
     setEditedImage(canvas.toDataURL());
   };
 
-  // Handle discard crop
   const handleDiscardCrop = () => {
     setIsCropping(false);
     setActiveControl(null);
-    drawOriginalImage(image); // Reset to the original image
+    drawOriginalImage(image);
   };
 
   const renderAdjustSettings = () => (
@@ -569,7 +544,7 @@ const ImageEditor = () => {
       activeControl === "crop" ||
       activeControl === "rotate"
     ) {
-      return null; // Hide controls section
+      return null; 
     }
 
     switch (activeControl) {
@@ -722,7 +697,7 @@ const ImageEditor = () => {
     <div className="editor-container">
       {/* Header */}
       <div className="header">
-        <h2 className="title">InstaEdit</h2>
+        <h2 className="title" onClick={handleHome}>InstaEdit</h2>
         <div className="options">
           <button
             className="upload-button"
@@ -796,18 +771,28 @@ const ImageEditor = () => {
             className="control-tab"
             onClick={() => {
               setFilters({
-                brightness: 100,   // Default: 100% (neutral brightness)
-                exposure: 100,       // Keep 100
-                shadows: 100,        // Default: 100 
-                highlights: 100,     // Default: 100
-                saturation: 100,   // Default: 100
-                warmth: 0,         // Keep 0 Dont change at all
-                vibrance: 0,       // Keep 0 Dont change at all
-                sharpness: 0,      // Keep 0 Dont change at all
-                hue: 0,            // Default: 0 degrees (no hue shift)
-                contrast: 0,     // Default: 0
+                brightness: 100,  
+                exposure: 100,      
+                shadows: 100,        
+                highlights: 100,     
+                saturation: 100,   
+                warmth: 0,        
+                vibrance: 0,       
+                sharpness: 0,      
+                hue: 0,            
+                contrast: 0,     
               });
-              setText("");
+                setTextProperties({
+                    text: "",
+                    x: 50,
+                    y: 50,
+                    rotation: 0,
+                    opacity: 1,
+                    font: "Arial",
+                    color: "#ffffff",
+                    fontWeight: "normal",
+                    fontSize: 48,
+                });
               setActiveControl("reset");
               setRotation(0);
             }}

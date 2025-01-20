@@ -1,6 +1,6 @@
 /* HomePage.css */
 body {
-    background: linear-gradient(to bottom right, #4B9FE1, #28559A);
+  background: linear-gradient(to bottom right, #4b9fe1, #28559a);
 }
 
 .homepage-container {
@@ -64,8 +64,8 @@ body {
 .gallery-section {
   padding: 100px 20px;
   display: flex;
-  flex-direction: row;
-  gap: 150px;
+  flex-direction: column;
+  gap: 50px;
 }
 
 .gallery-item {
@@ -96,7 +96,7 @@ body {
   top: 70%;
   right: 45%;
   padding: 15px 30px;
-  background: #28559A;
+  background: #28559a;
   color: white;
   border: none;
   border-radius: 30px;
@@ -116,7 +116,7 @@ body {
   position: relative;
   width: 420px;
   height: 320px;
-  background: #28559A;
+  background: #28559a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,7 +137,7 @@ body {
   justify-content: center;
   font-size: 25px;
   font-weight: bold;
-  background-color: #63BCE5;
+  background-color: #63bce5;
   transition: all 0.5s;
 }
 
@@ -185,5 +185,47 @@ body {
 
   .feature-card {
     margin: 0 20px;
+  }
+}
+
+.gallery-row {
+  display: flex;
+  gap: 30px;
+  white-space: nowrap;
+  animation: slide-left 20s linear infinite;
+}
+
+.gallery-row:nth-child(2) {
+  animation: slide-right 20s linear infinite;
+}
+
+.gallery-img {
+  height: auto;
+  width: 300px;
+  margin: 0 10px;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.gallery-img:hover {
+  transform: scale(1.1);
+}
+
+/* Animations */
+@keyframes slide-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

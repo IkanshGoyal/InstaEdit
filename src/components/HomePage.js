@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './HomePage.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./HomePage.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -12,62 +12,92 @@ const HomePage = () => {
       setScrollPosition(position);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('show');
+            entry.target.classList.add("show");
           }
         });
       },
       { threshold: 0.1 }
     );
 
-    document.querySelectorAll('.feature-card, .gallery-item').forEach((element) => {
-      observer.observe(element);
-    });
+    document
+      .querySelectorAll(".feature-card, .gallery-item")
+      .forEach((element) => {
+        observer.observe(element);
+      });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
       observer.disconnect();
     };
   }, []);
 
   const handleTryEditor = () => {
-    navigate('/editor');
+    navigate("/editor");
   };
 
   return (
     <div className="homepage-container">
       {/* Hero Section */}
-      <div className="hero-section" style={{ transform: `scale(${1 - scrollPosition * 0.001})` }}>
-        <img src="/mountain.png" alt="Mountain Background" className="hero-image" />
+      <div
+        className="hero-section"
+        style={{ transform: `scale(${1 - scrollPosition * 0.001})` }}
+      >
+        <img
+          src="/mountain.png"
+          alt="Mountain Background"
+          className="hero-image"
+        />
       </div>
 
       {/* Features Section */}
       <div className="features-section">
-      <div class="card" id="card1">Advanced Filters</div>
-      <div class="card" id="card2">Smart Text Placement</div>
-      <div class="card" id="card3">Quick Adjustments</div>
-        
+        <div class="card" id="card1">
+          Advanced Filters
+        </div>
+        <div class="card" id="card2">
+          Smart Text Placement
+        </div>
+        <div class="card" id="card3">
+          Quick Adjustments
+        </div>
       </div>
 
       {/* Gallery Section */}
       <div className="gallery-section">
-          <img src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=750&q=75" alt="Before Edit" className="gallery-img" />
-          <img src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=640&q=75" alt="After Edit" className="gallery-img" />
-
-
-          <img src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1080&q=75" alt="Before Edit" className="gallery-img" />
-          <img src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1920&q=75" alt="After Edit" className="gallery-img" />
-
-
-
-          <img src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75" alt="Before Edit" className="gallery-img" />
-          <img src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75" alt="After Edit" className="gallery-img" />
-
+        <div className="gallery-row">
+          <img
+            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=750&q=75"
+            className="gallery-img" alt="demo"
+          />
+          <img
+            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=640&q=75"
+            className="gallery-img" alt="demo"
+          />
+          <img
+            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1080&q=75"
+            className="gallery-img" alt="demo"
+          />
+        </div>
+        <div className="gallery-row">
+          <img
+            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1920&q=75"
+            className="gallery-img" alt="demo"
+          />
+          <img
+            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75"
+            className="gallery-img" alt="demo"
+          />
+          <img
+            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75"
+            className="gallery-img" alt="demo"
+          />
+        </div>
       </div>
 
       <button className="try-editor-btn" onClick={handleTryEditor}>
