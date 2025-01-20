@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./ImageEditor.css";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import FilterIcon from "@mui/icons-material/Filter";
@@ -11,6 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
 
 const ImageEditor = () => {
+  const navigate = useNavigate();
   const [activeControl, setActiveControl] = useState(null);
   const [rotation, setRotation] = useState(0);
   const [image, setImage] = useState(null);
@@ -61,6 +63,10 @@ const ImageEditor = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleHome = () => {
+    navigate('/');
   };
 
   // Draw the original image without filters or transformations
@@ -718,7 +724,7 @@ const ImageEditor = () => {
     <div className="editor-container">
       {/* Header */}
       <div className="header">
-        <h2 className="title">InstaEdit</h2>
+        <h2 className="title" onClick={handleHome}>InstaEdit</h2>
         <div className="options">
           <button
             className="upload-button"

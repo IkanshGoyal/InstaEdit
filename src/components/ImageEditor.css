@@ -15,6 +15,12 @@
   background: #28559a;
 }
 
+.header h2 {
+    cursor: pointer;
+    font-family: chalkboard;
+    margin-top: 10px;
+}
+
 .editor-card {
   background: white;
   border-radius: 8px;
