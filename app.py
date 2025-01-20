@@ -1,13 +1,13 @@
-from flask import Flask, request, jsonify, send_file
-import os
+from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 import torch
 from PIL import Image
 from torchvision import transforms
 import io
 import base64
-from matplotlib.figure import Figure
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Load the traced model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -22,18 +22,36 @@ def preprocess_image(image, img_size=(256, 256)):
         transforms.ToTensor(),
     ])
     return transform(image).unsqueeze(0)  # Add batch dimension
+
+@app.route('/upload', methods=['OPTIONS'])
+def handle_preflight():
+    response_headers = {
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+    return "", 204, response_headers
+
 @app.route('/upload', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def upload_image():
+    response_headers = {
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+
     if 'file' not in request.files:
-        return jsonify({"error": "No file provided"}), 400
+        return jsonify({"error": "No file provided"}), 400, response_headers
 
     file = request.files['file']
     if file.filename == '':
-        return jsonify({"error": "No file selected"}), 400
+        return jsonify({"error": "No file selected"}), 400, response_headers
 
     try:
         # Load the uploaded image
         image = Image.open(file).convert("RGB")
+        original_width, original_height = image.size  # Get original dimensions
 
         # Preprocess the image
         input_tensor = preprocess_image(image).to(device)
@@ -55,13 +73,17 @@ def upload_image():
         # Encode the binary mask in Base64
         base64_image = base64.b64encode(buf.read()).decode("utf-8")
 
-        # Return the Base64 encoded mask as a JSON response
-        return jsonify({"mask": base64_image})
+        # Return the Base64 encoded mask, mask array, and original dimensions
+        return jsonify({
+            "mask": base64_image,
+            "mask_array": predicted_mask.tolist(),  # Convert numpy array to list
+            "original_width": original_width,
+            "original_height": original_height,
+        }), 200, response_headers
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        return jsonify({"error": str(e)}), 500, response_headers
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

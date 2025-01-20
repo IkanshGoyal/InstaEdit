@@ -18,6 +18,11 @@ const ImageEditor = () => {
   const [image, setImage] = useState(null);
   const [editedImage, setEditedImage] = useState(null);
 
+  const [mask, setMask] = useState(null);
+  const [maskArray, setMaskArray] = useState(null);
+  const [originalWidth, setOriginalWidth] = useState(0);
+  const [originalHeight, setOriginalHeight] = useState(0);
+
   const [filters, setFilters] = useState({
     brightness: 100,
     exposure: 100,
@@ -49,8 +54,10 @@ const ImageEditor = () => {
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -63,6 +70,84 @@ const ImageEditor = () => {
       };
       reader.readAsDataURL(file);
     }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://localhost:5000/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to process image");
+      }
+
+      const data = await response.json();
+
+      setMask(data.mask);
+      setMaskArray(data.mask_array);
+      setOriginalWidth(data.original_width);
+      setOriginalHeight(data.original_height);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const drawTextBehindObject = () => {
+    if (!image || !maskArray || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = originalWidth;
+    canvas.height = originalHeight;
+
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const maskCanvas = document.createElement("canvas");
+    const maskCtx = maskCanvas.getContext("2d");
+    maskCanvas.width = originalWidth;
+    maskCanvas.height = originalHeight;
+
+    const maskImg = new Image();
+    maskImg.src = `data:image/png;base64,${mask}`;
+    maskImg.onload = () => {
+      maskCtx.drawImage(maskImg, 0, 0, originalWidth, originalHeight);
+
+      const maskImageData = maskCtx.getImageData(
+        0,
+        0,
+        originalWidth,
+        originalHeight
+      );
+      const maskData = maskImageData.data;
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      console.log(maskData)
+
+      for (let i = 0; i < maskData.length; i += 4) {
+        if (maskData[i] === 1) {
+          data[i] = data[i]; 
+          data[i + 1] = data[i + 1]; 
+          data[i + 2] = data[i + 2]; 
+          data[i + 3] = 255; 
+        } else {
+          data[i + 3] = 128; 
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+
+      ctx.fillStyle = "white";
+      ctx.font = "48px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(textProperties.text, canvas.width / 2, canvas.height / 2);
+    };
   };
 
   const handleHome = () => {
@@ -698,6 +783,9 @@ const ImageEditor = () => {
                   }
                 />
               </div>
+              <button onClick={drawTextBehindObject} className="behind-text">
+                Apply Text Behind Object
+              </button>
             </div>
           </div>
         );

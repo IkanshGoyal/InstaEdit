@@ -225,7 +225,7 @@
   margin-top: 20px;
 }
 
-.action-button {
+.action-button, .behind-text {
   padding: 8px 16px;
   background: #0f2557;
   color: white;
@@ -238,7 +238,8 @@
 }
 
 .action-button:hover,
-.upload-button:hover {
+.upload-button:hover,
+.behind-text:hover {
   background: #0056b3;
 }
 
