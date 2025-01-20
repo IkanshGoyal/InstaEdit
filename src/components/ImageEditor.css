@@ -156,6 +156,7 @@
 
 .canvas-container {
   flex: 1;
+  height: calc(100vh - 295px);
   display: flex;
   padding-bottom: 10%;
   justify-content: center;

@@ -73,29 +73,29 @@ const HomePage = () => {
         <div className="gallery-row">
           <img
             src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=750&q=75"
-            className="gallery-img"
+            className="gallery-img" alt="demo"
           />
           <img
             src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=640&q=75"
-            className="gallery-img"
+            className="gallery-img" alt="demo"
           />
           <img
             src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1080&q=75"
-            className="gallery-img"
+            className="gallery-img" alt="demo"
           />
         </div>
         <div className="gallery-row">
           <img
             src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1920&q=75"
-            className="gallery-img"
+            className="gallery-img" alt="demo"
           />
           <img
             src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75"
-            className="gallery-img"
+            className="gallery-img" alt="demo"
           />
           <img
             src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75"
-            className="gallery-img"
+            className="gallery-img" alt="demo"
           />
         </div>
       </div>
