@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# object_mask_models
+/object_mask_models
+
 # testing
 /coverage
 
