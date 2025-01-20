@@ -50,6 +50,24 @@ const ImageEditor = () => {
   const fileInputRef = useRef(null);
 
   const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        setImage(img);
+        const canvas = canvasRef.current;
+        // Set canvas size to image size (or 10% bigger)
+        canvas.width = img.width * 2; // 10% bigger
+        canvas.height = img.height * 2; // 10% bigger
+        drawOriginalImage(img);
+      };
+    };
+    reader.readAsDataURL(file);
+  }
+};
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -454,16 +472,18 @@ const ImageEditor = () => {
     setActiveControl("crop");
     const canvas = canvasRef.current;
     if (canvas) {
+      // Get the dimensions of the canvas element
+      const canvasRect = canvas.getBoundingClientRect();
+  
+      // Set cropRect to the dimensions of the canvas element
       setCropRect({
-        // x: canvas.width * 0.05, // Why exactly did we do this?
-        // y: canvas.height * 0.05, // Why exactly did we do this?
         x: 0,
         y: 0,
-        // width: canvas.width * 0.3,
-        // height: canvas.height * 0.3,
-        width: canvas.width * 0.3,
-        height: canvas.height * 0.3,
+        width: canvasRect.width * 1.5, // Use the actual rendered width of the canvas
+        height: canvasRect.height, // Use the actual rendered height of the canvas
       });
+  
+      console.log(`Canvas width: ${canvasRect.width}, Canvas height: ${canvasRect.height}`);
     }
   };
 
@@ -501,8 +521,10 @@ const ImageEditor = () => {
       cropRect.width,
       cropRect.height
     );
-    canvas.width = cropRect.width;
-    canvas.height = cropRect.height;
+    console.log(`handle Save crop image data: ${cropRect.x} ${cropRect.y} ${cropRect.width} ${cropRect.height}`);
+    
+    // canvas.width = cropRect.width;
+    // canvas.height = cropRect.height;
     ctx.putImageData(imageData, 0, 0);
 
     setIsCropping(false);
@@ -846,6 +868,47 @@ const ImageEditor = () => {
 
         {/* Left: Canvas */}
         <div className="canvas-container">
+  <canvas
+    ref={canvasRef}
+    className="editor-canvas"
+    onMouseDown={isCropping ? handleMouseDown : null}
+    onMouseMove={isCropping ? handleMouseMove : null}
+    onMouseUp={isCropping ? handleMouseUp : null}
+  />
+  {isCropping && (
+    <div
+      className="crop-rectangle"
+      style={{
+        left: `${cropRect.x}px`,
+        top: `${cropRect.y}px`,
+        width: `${cropRect.width}px`,
+        height: `${cropRect.height}px`,
+      }}
+    >
+      {console.log('Crop Rect:', cropRect)}
+    </div>
+            
+          )}
+          {isCropping && (
+            <div className="crop-buttons">
+              <button onClick={handleSaveCrop} className="crop-button save">
+                <CheckIcon />
+              </button>
+              <button
+                onClick={handleDiscardCrop}
+                className="crop-button discard"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+          )}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden-input"
+          />
           {/* Always render the canvas */}
           <canvas
             ref={canvasRef}

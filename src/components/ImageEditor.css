@@ -306,7 +306,7 @@
 }
 
 .editor-canvas {
-  max-width: 80%;
+  min-width: 80%;
   border: 0px;
   height: 100%;
 }
@@ -407,9 +407,11 @@
   resize: both; /* Allow resizing */
   overflow: auto; /* Enable resize handles */
   pointer-events: all; /* Ensure the rectangle can be interacted with */
-  width: fit-content; /* Default width fits content */
-  height: fit-content; /* Default height fits content */
+  /* width: fit-content; Default width fits content */
+  /* height: fit-content; Default height fits content */
 }
+
+
 
 .crop-rectangle::after {
   content: "";
