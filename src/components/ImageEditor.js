@@ -325,141 +325,141 @@ const ImageEditor = () => {
       case "warm":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 120,
           warmth: 120,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "vivid":
         setFilters({
           brightness: 100,
-          contrast: 120,
+          contrast: 20,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 150,
           warmth: 100,
-          vibrance: 150,
-          sharpness: 100,
+          vibrance: 50,
+          sharpness: 0,
         });
         break;
       case "cool":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 200,
           saturation: 100,
           warmth: 80,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "grayscale":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 0,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "sepia":
         setFilters({
           brightness: 100,
-          contrast: 100,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 100,
           warmth: 150,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "high-contrast":
         setFilters({
           brightness: 100,
-          contrast: 150,
+          contrast: 50,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 100,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "low-contrast":
         setFilters({
           brightness: 100,
-          contrast: 80,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 100,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "vintage":
         setFilters({
           brightness: 90,
-          contrast: 90,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 30,
           saturation: 80,
           warmth: 120,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       case "dreamy":
         setFilters({
           brightness: 110,
-          contrast: 90,
+          contrast: 0,
           exposure: 100,
           shadows: 100,
           highlights: 100,
           hue: 0,
           saturation: 120,
           warmth: 100,
-          vibrance: 120,
-          sharpness: 80,
+          vibrance: 20,
+          sharpness: 0,
         });
         break;
       case "dramatic":
         setFilters({
           brightness: 90,
-          contrast: 120,
+          contrast: 20,
           exposure: 100,
           shadows: 120,
           highlights: 80,
           hue: 0,
           saturation: 100,
           warmth: 100,
-          vibrance: 100,
-          sharpness: 100,
+          vibrance: 0,
+          sharpness: 0,
         });
         break;
       default:
