@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "./ImageEditor.css";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import FilterIcon from "@mui/icons-material/Filter";
@@ -19,18 +19,18 @@ const ImageEditor = () => {
   const [editedImage, setEditedImage] = useState(null);
 
   const [filters, setFilters] = useState({
-    brightness: 100,   
-    exposure: 100,       
-    shadows: 100,        
-    highlights: 100,     
-    saturation: 100,   
-    warmth: 0,         
-    vibrance: 0,       
-    sharpness: 0,     
-    hue: 0,           
-    contrast: 0,    
+    brightness: 100,
+    exposure: 100,
+    shadows: 100,
+    highlights: 100,
+    saturation: 100,
+    warmth: 0,
+    vibrance: 0,
+    sharpness: 0,
+    hue: 0,
+    contrast: 0,
   });
-  
+
   const [textProperties, setTextProperties] = useState({
     text: "",
     x: 50,
@@ -68,9 +68,23 @@ const ImageEditor = () => {
     reader.readAsDataURL(file);
   }
 };
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          setImage(img);
+          drawOriginalImage(img);
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleHome = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const drawOriginalImage = (img) => {
@@ -89,51 +103,51 @@ const ImageEditor = () => {
 
   const applyBrightness = (data, brightness) => {
     for (let i = 0; i < data.length; i += 4) {
-      data[i] = data[i] * (brightness / 100); 
-      data[i + 1] = data[i + 1] * (brightness / 100); 
-      data[i + 2] = data[i + 2] * (brightness / 100); 
+      data[i] = data[i] * (brightness / 100);
+      data[i + 1] = data[i + 1] * (brightness / 100);
+      data[i + 2] = data[i + 2] * (brightness / 100);
     }
   };
 
   const applyContrast = (data, contrast) => {
     const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
     for (let i = 0; i < data.length; i += 4) {
-      data[i] = factor * (data[i] - 128) + 128; 
-      data[i + 1] = factor * (data[i + 1] - 128) + 128; 
-      data[i + 2] = factor * (data[i + 2] - 128) + 128; 
+      data[i] = factor * (data[i] - 128) + 128;
+      data[i + 1] = factor * (data[i + 1] - 128) + 128;
+      data[i + 2] = factor * (data[i + 2] - 128) + 128;
     }
   };
 
   const applyExposure = (data, exposure) => {
     for (let i = 0; i < data.length; i += 4) {
-      data[i] = data[i] * (exposure / 100); 
-      data[i + 1] = data[i + 1] * (exposure / 100); 
-      data[i + 2] = data[i + 2] * (exposure / 100); 
+      data[i] = data[i] * (exposure / 100);
+      data[i + 1] = data[i + 1] * (exposure / 100);
+      data[i + 2] = data[i + 2] * (exposure / 100);
     }
   };
 
   const applyShadows = (data, shadows) => {
     for (let i = 0; i < data.length; i += 4) {
       if (data[i] < 128) data[i] = data[i] * (shadows / 100);
-      if (data[i + 1] < 128) data[i + 1] = data[i + 1] * (shadows / 100); 
-      if (data[i + 2] < 128) data[i + 2] = data[i + 2] * (shadows / 100); 
+      if (data[i + 1] < 128) data[i + 1] = data[i + 1] * (shadows / 100);
+      if (data[i + 2] < 128) data[i + 2] = data[i + 2] * (shadows / 100);
     }
   };
 
   const applyHighlights = (data, highlights) => {
     for (let i = 0; i < data.length; i += 4) {
-      if (data[i] >= 128) data[i] = data[i] * (highlights / 100); 
-      if (data[i + 1] >= 128) data[i + 1] = data[i + 1] * (highlights / 100); 
-      if (data[i + 2] >= 128) data[i + 2] = data[i + 2] * (highlights / 100); 
+      if (data[i] >= 128) data[i] = data[i] * (highlights / 100);
+      if (data[i + 1] >= 128) data[i + 1] = data[i + 1] * (highlights / 100);
+      if (data[i + 2] >= 128) data[i + 2] = data[i + 2] * (highlights / 100);
     }
   };
 
   const applySaturation = (data, saturation) => {
     for (let i = 0; i < data.length; i += 4) {
       const gray = 0.2989 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-      data[i] = gray + (data[i] - gray) * (saturation / 100); 
-      data[i + 1] = gray + (data[i + 1] - gray) * (saturation / 100); 
-      data[i + 2] = gray + (data[i + 2] - gray) * (saturation / 100); 
+      data[i] = gray + (data[i] - gray) * (saturation / 100);
+      data[i + 1] = gray + (data[i + 1] - gray) * (saturation / 100);
+      data[i + 2] = gray + (data[i + 2] - gray) * (saturation / 100);
     }
   };
 
@@ -166,22 +180,22 @@ const ImageEditor = () => {
       const b = data[i + 2];
       data[i] =
         r * (1 - warmth / 100) +
-        (r * 0.393 + g * 0.769 + b * 0.189) * (warmth / 100); 
+        (r * 0.393 + g * 0.769 + b * 0.189) * (warmth / 100);
       data[i + 1] =
         g * (1 - warmth / 100) +
-        (r * 0.349 + g * 0.686 + b * 0.168) * (warmth / 100); 
+        (r * 0.349 + g * 0.686 + b * 0.168) * (warmth / 100);
       data[i + 2] =
         b * (1 - warmth / 100) +
-        (r * 0.272 + g * 0.534 + b * 0.131) * (warmth / 100); 
+        (r * 0.272 + g * 0.534 + b * 0.131) * (warmth / 100);
     }
   };
 
   const applyVibrance = (data, vibrance) => {
     for (let i = 0; i < data.length; i += 4) {
       const max = Math.max(data[i], data[i + 1], data[i + 2]);
-      data[i] = data[i] + (max - data[i]) * (vibrance / 100); 
-      data[i + 1] = data[i + 1] + (max - data[i + 1]) * (vibrance / 100); 
-      data[i + 2] = data[i + 2] + (max - data[i + 2]) * (vibrance / 100); 
+      data[i] = data[i] + (max - data[i]) * (vibrance / 100);
+      data[i + 1] = data[i + 1] + (max - data[i + 1]) * (vibrance / 100);
+      data[i + 2] = data[i + 2] + (max - data[i + 2]) * (vibrance / 100);
     }
   };
 
@@ -212,50 +226,53 @@ const ImageEditor = () => {
     }
   };
 
-  const applyFilters = useCallback((ctx, width, height) => {
-    const imageData = ctx.getImageData(0, 0, width, height);
-    const data = imageData.data;
-  
-    applyBrightness(data, filters.brightness);
-    applyContrast(data, filters.contrast);
-    applyExposure(data, filters.exposure);
-    applyShadows(data, filters.shadows);
-    applyHighlights(data, filters.highlights);
-    applySharpness(data, width, height, filters.sharpness);
-    applySaturation(data, filters.saturation);
-    applyHue(data, filters.hue);
-    applyWarmth(data, filters.warmth);
-    applyVibrance(data, filters.vibrance);
-  
-    ctx.putImageData(imageData, 0, 0);
-  }, [filters]);
-  
+  const applyFilters = useCallback(
+    (ctx, width, height) => {
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+
+      applyBrightness(data, filters.brightness);
+      applyContrast(data, filters.contrast);
+      applyExposure(data, filters.exposure);
+      applyShadows(data, filters.shadows);
+      applyHighlights(data, filters.highlights);
+      applySharpness(data, width, height, filters.sharpness);
+      applySaturation(data, filters.saturation);
+      applyHue(data, filters.hue);
+      applyWarmth(data, filters.warmth);
+      applyVibrance(data, filters.vibrance);
+
+      ctx.putImageData(imageData, 0, 0);
+    },
+    [filters]
+  );
+
   const drawImageWithFilters = useCallback(() => {
     if (!image) return;
-  
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-  
+
     const absCos = Math.abs(Math.cos((rotation * Math.PI) / 180));
     const absSin = Math.abs(Math.sin((rotation * Math.PI) / 180));
     const rotatedWidth = image.width * absCos + image.height * absSin;
     const rotatedHeight = image.width * absSin + image.height * absCos;
-  
+
     canvas.width = rotatedWidth;
     canvas.height = rotatedHeight;
-  
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.rotate((rotation * Math.PI) / 180);
-  
+
     ctx.drawImage(image, -image.width / 2, -image.height / 2);
-  
+
     applyFilters(ctx, canvas.width, canvas.height);
-  
+
     ctx.restore();
-  
+
     if (textProperties.text) {
       ctx.save();
       ctx.font = `${textProperties.fontWeight} ${textProperties.fontSize}px ${textProperties.font}`;
@@ -263,13 +280,13 @@ const ImageEditor = () => {
       ctx.globalAlpha = textProperties.opacity;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-  
+
       ctx.translate(textProperties.x, textProperties.y);
       ctx.rotate((textProperties.rotation * Math.PI) / 180);
       ctx.fillText(textProperties.text, 0, 0);
       ctx.restore();
     }
-  
+
     setEditedImage(canvas.toDataURL());
   }, [image, rotation, textProperties, applyFilters]);
 
@@ -552,7 +569,7 @@ const ImageEditor = () => {
       activeControl === "crop" ||
       activeControl === "rotate"
     ) {
-      return null; 
+      return null;
     }
 
     switch (activeControl) {
@@ -586,114 +603,126 @@ const ImageEditor = () => {
             </div>
           </div>
         );
-        case "text":
-            return (
-              <div className="control-group">
-                <h3>Add Text</h3>
-                <div className="text-controls">
-                  {/* Text Input */}
-                  <div className="text-control">
-                    <label>Text</label>
-                    <input
-                      className="input"
-                      type="text"
-                      value={textProperties.text}
-                      onChange={(e) => handleTextChange("text", e.target.value)}
-                      placeholder="Enter text"
-                    />
-                  </div>
-          
-                  {/* X Coordinate */}
-                  <div className="text-control">
-                    <label>X Coordinate</label>
-                    <input
-                      type="number"
-                      value={textProperties.x}
-                      onChange={(e) => handleTextChange("x", parseInt(e.target.value))}
-                    />
-                  </div>
-          
-                  {/* Y Coordinate */}
-                  <div className="text-control">
-                    <label>Y Coordinate</label>
-                    <input
-                      type="number"
-                      value={textProperties.y}
-                      onChange={(e) => handleTextChange("y", parseInt(e.target.value))}
-                    />
-                  </div>
-          
-                  {/* Rotation */}
-                  <div className="text-control">
-                    <label>Rotation (degrees)</label>
-                    <input
-                      type="number"
-                      value={textProperties.rotation}
-                      onChange={(e) => handleTextChange("rotation", parseInt(e.target.value))}
-                    />
-                  </div>
-          
-                  {/* Opacity */}
-                  <div className="text-control">
-                    <label>Opacity</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="1"
-                      value={textProperties.opacity}
-                      onChange={(e) => handleTextChange("opacity", parseFloat(e.target.value))}
-                    />
-                  </div>
-          
-                  {/* Font */}
-                  <div className="text-control">
-                    <label>Font</label>
-                    <select
-                      value={textProperties.font}
-                      onChange={(e) => handleTextChange("font", e.target.value)}
-                    >
-                      <option value="Arial">Arial</option>
-                      <option value="Times New Roman">Times New Roman</option>
-                      <option value="Courier New">Courier New</option>
-                      <option value="Verdana">Verdana</option>
-                    </select>
-                  </div>
-          
-                  {/* Color */}
-                  <div className="text-control">
-                    <label>Color</label>
-                    <input
-                      type="color"
-                      value={textProperties.color}
-                      onChange={(e) => handleTextChange("color", e.target.value)}
-                    />
-                  </div>
-          
-                  {/* Font Weight */}
-                  <div className="text-control">
-                    <label>Font Weight</label>
-                    <select
-                      value={textProperties.fontWeight}
-                      onChange={(e) => handleTextChange("fontWeight", e.target.value)}
-                    >
-                      <option value="normal">Normal</option>
-                      <option value="bold">Bold</option>
-                    </select>
-                  </div>
-          
-                  {/* Font Size */}
-                  <div className="text-control">
-                    <label>Font Size</label>
-                    <input
-                      type="number"
-                      value={textProperties.fontSize}
-                      onChange={(e) => handleTextChange("fontSize", parseInt(e.target.value))}
-                    />
-                  </div>
-                </div>
+      case "text":
+        return (
+          <div className="control-group">
+            <h3>Add Text</h3>
+            <div className="text-controls">
+              {/* Text Input */}
+              <div className="text-control">
+                <label>Text</label>
+                <input
+                  className="input"
+                  type="text"
+                  value={textProperties.text}
+                  onChange={(e) => handleTextChange("text", e.target.value)}
+                  placeholder="Enter text"
+                />
               </div>
-            );
+
+              {/* X Coordinate */}
+              <div className="text-control">
+                <label>X Coordinate</label>
+                <input
+                  type="number"
+                  value={textProperties.x}
+                  onChange={(e) =>
+                    handleTextChange("x", parseInt(e.target.value))
+                  }
+                />
+              </div>
+
+              {/* Y Coordinate */}
+              <div className="text-control">
+                <label>Y Coordinate</label>
+                <input
+                  type="number"
+                  value={textProperties.y}
+                  onChange={(e) =>
+                    handleTextChange("y", parseInt(e.target.value))
+                  }
+                />
+              </div>
+
+              {/* Rotation */}
+              <div className="text-control">
+                <label>Rotation (degrees)</label>
+                <input
+                  type="number"
+                  value={textProperties.rotation}
+                  onChange={(e) =>
+                    handleTextChange("rotation", parseInt(e.target.value))
+                  }
+                />
+              </div>
+
+              {/* Opacity */}
+              <div className="text-control">
+                <label>Opacity</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={textProperties.opacity}
+                  onChange={(e) =>
+                    handleTextChange("opacity", parseFloat(e.target.value))
+                  }
+                />
+              </div>
+
+              {/* Font */}
+              <div className="text-control">
+                <label>Font</label>
+                <select
+                  value={textProperties.font}
+                  onChange={(e) => handleTextChange("font", e.target.value)}
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Verdana">Verdana</option>
+                </select>
+              </div>
+
+              {/* Color */}
+              <div className="text-control">
+                <label>Color</label>
+                <input
+                  type="color"
+                  value={textProperties.color}
+                  onChange={(e) => handleTextChange("color", e.target.value)}
+                />
+              </div>
+
+              {/* Font Weight */}
+              <div className="text-control">
+                <label>Font Weight</label>
+                <select
+                  value={textProperties.fontWeight}
+                  onChange={(e) =>
+                    handleTextChange("fontWeight", e.target.value)
+                  }
+                >
+                  <option value="normal">Normal</option>
+                  <option value="bold">Bold</option>
+                </select>
+              </div>
+
+              {/* Font Size */}
+              <div className="text-control">
+                <label>Font Size</label>
+                <input
+                  type="number"
+                  value={textProperties.fontSize}
+                  onChange={(e) =>
+                    handleTextChange("fontSize", parseInt(e.target.value))
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        );
       case "settings":
         return renderAdjustSettings();
       default:
@@ -705,7 +734,9 @@ const ImageEditor = () => {
     <div className="editor-container">
       {/* Header */}
       <div className="header">
-        <h2 className="title" onClick={handleHome}>InstaEdit</h2>
+        <h2 className="title" onClick={handleHome}>
+          InstaEdit
+        </h2>
         <div className="options">
           <button
             className="upload-button"
@@ -779,28 +810,28 @@ const ImageEditor = () => {
             className="control-tab"
             onClick={() => {
               setFilters({
-                brightness: 100,  
-                exposure: 100,      
-                shadows: 100,        
-                highlights: 100,     
-                saturation: 100,   
-                warmth: 0,        
-                vibrance: 0,       
-                sharpness: 0,      
-                hue: 0,            
-                contrast: 0,     
+                brightness: 100,
+                exposure: 100,
+                shadows: 100,
+                highlights: 100,
+                saturation: 100,
+                warmth: 0,
+                vibrance: 0,
+                sharpness: 0,
+                hue: 0,
+                contrast: 0,
               });
-                setTextProperties({
-                    text: "",
-                    x: 50,
-                    y: 50,
-                    rotation: 0,
-                    opacity: 1,
-                    font: "Arial",
-                    color: "#ffffff",
-                    fontWeight: "normal",
-                    fontSize: 48,
-                });
+              setTextProperties({
+                text: "",
+                x: 50,
+                y: 50,
+                rotation: 0,
+                opacity: 1,
+                font: "Arial",
+                color: "#ffffff",
+                fontWeight: "normal",
+                fontSize: 48,
+              });
               setActiveControl("reset");
               setRotation(0);
             }}
@@ -812,6 +843,29 @@ const ImageEditor = () => {
 
       {/* Editor Layout */}
       <div className="editor-layout">
+        {/* Show the upload container when no image is uploaded */}
+        {!image && (
+          <div className="container">
+            <div className="folder">
+              <div className="front-side">
+                <div className="tip"></div>
+                <div className="cover"></div>
+              </div>
+              <div className="back-side cover"></div>
+            </div>
+            <label className="custom-file-upload">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+                className="hidden-input"
+              />
+              Choose a file
+            </label>
+          </div>
+        )}
+
         {/* Left: Canvas */}
         <div className="canvas-container">
   <canvas
@@ -855,6 +909,42 @@ const ImageEditor = () => {
             accept="image/*"
             className="hidden-input"
           />
+          {/* Always render the canvas */}
+          <canvas
+            ref={canvasRef}
+            className={`editor-canvas ${!image ? "hidden" : ""}`} // Hide canvas when no image is uploaded
+            onMouseDown={isCropping ? handleMouseDown : null}
+            onMouseMove={isCropping ? handleMouseMove : null}
+            onMouseUp={isCropping ? handleMouseUp : null}
+          />
+
+          {/* Render cropping UI if cropping is active */}
+          {isCropping && (
+            <>
+              <div
+                className="crop-rectangle"
+                style={{
+                  left: `${cropRect.x}px`,
+                  top: `${cropRect.y}px`,
+                  width: `${cropRect.width}px`,
+                  height: `${cropRect.height}px`,
+                }}
+              >
+                {console.log("Crop Rect:", cropRect)}
+              </div>
+              <div className="crop-buttons">
+                <button onClick={handleSaveCrop} className="crop-button save">
+                  <CheckIcon />
+                </button>
+                <button
+                  onClick={handleDiscardCrop}
+                  className="crop-button discard"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right: Controls */}

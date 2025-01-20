@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
+import bear from './assets/bear.png';
+import life from './assets/life.webp';
+import enjoy from './assets/enjoy.webp';
+import snap from './assets/snap.webp';
+import wow from './assets/wow.webp';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -76,25 +81,25 @@ const HomePage = () => {
             className="gallery-img" alt="demo"
           />
           <img
-            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=640&q=75"
+            src={bear} 
             className="gallery-img" alt="demo"
           />
           <img
-            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1080&q=75"
+            src={life}
             className="gallery-img" alt="demo"
           />
         </div>
         <div className="gallery-row">
           <img
-            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=1920&q=75"
+            src={enjoy}
             className="gallery-img" alt="demo"
           />
           <img
-            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75"
+            src={snap}
             className="gallery-img" alt="demo"
           />
           <img
-            src="https://www.textbehindimage.net/_next/image?url=https%3A%2F%2Fcdn.lantaai.com%2Fuse-case%2F0c8172aa-5fe9-491e-9660-ddbfc40b0f3e.jpeg&w=3840&q=75"
+            src={wow}
             className="gallery-img" alt="demo"
           />
         </div>
