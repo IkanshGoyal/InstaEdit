@@ -5,12 +5,28 @@ from PIL import Image
 from torchvision import transforms
 import io
 import base64
+import os
+import gdown
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Specify the Google Drive file ID and the download destination
+MODEL_URL = "https://drive.google.com/uc?id=16JDNkA6kEb1Ht_S1dIIk532oNHrKM11-"
+MODEL_DIR = "object_mask_models"
+MODEL_PATH = os.path.join(MODEL_DIR, "traced_model.pt")
+
+# Ensure the model directory exists
+os.makedirs(MODEL_DIR, exist_ok=True)
+
+# Download the model file if it doesn't exist
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model...")
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+
+# Load the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = torch.jit.load("object_mask_models/traced_model.pt", map_location=torch.device("cpu"))
+model = torch.jit.load(MODEL_PATH, map_location=torch.device("cpu"))
 model.to(device)
 model.eval()
 
@@ -19,7 +35,7 @@ def preprocess_image(image, img_size=(256, 256)):
         transforms.Resize(img_size),
         transforms.ToTensor(),
     ])
-    return transform(image).unsqueeze(0) 
+    return transform(image).unsqueeze(0)
 
 @app.route('/upload', methods=['OPTIONS'])
 def handle_preflight():
@@ -56,17 +72,8 @@ def upload_image():
             predicted_mask = torch.sigmoid(predicted_mask)
             predicted_mask = (predicted_mask > 0.5).float().squeeze().cpu().numpy()
 
-        mask_image = Image.fromarray((predicted_mask * 255).astype("uint8"))
-
-        buf = io.BytesIO()
-        mask_image.save(buf, format="PNG")
-        buf.seek(0)
-
-        base64_image = base64.b64encode(buf.read()).decode("utf-8")
-
         return jsonify({
-            "mask": base64_image,
-            "mask_array": predicted_mask.tolist(),  
+            "mask_array": predicted_mask.tolist(),
         }), 200, response_headers
 
     except Exception as e:

@@ -3,3 +3,6 @@ torch==2.5.1
 Pillow==10.4.0
 torchvision==0.20.1
 matplotlib==3.10.0
+flask-cors
+gdown
+gunicorn
