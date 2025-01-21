@@ -109,7 +109,7 @@ const HomePage = () => {
         Try Editor Now
       </button>
       <footer className="footer">
-        <p>Developed by <a href="https://www.linkedin.com/in/ikanshgoyal/" target="_blank" rel="noopener noreferrer">Ikansh</a> and <a href="https://www.linkedin.com/in/ujjawal/" target="_blank" rel="noopener noreferrer">Ujjawal</a></p>
+        <p>Developed by <a href="https://www.linkedin.com/in/ikanshgoyal/" target="_blank" rel="noopener noreferrer">Ikansh</a> and <a href="https://www.linkedin.com/in/ujjawal-gusain/" target="_blank" rel="noopener noreferrer">Ujjawal</a></p>
       </footer>
     </div>
   );
