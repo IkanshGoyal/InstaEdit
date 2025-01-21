@@ -16,11 +16,12 @@ body {
 }
 
 .footer {
-  background-color: #2d3436;
-  padding: 20px 0;
+  background-color: transparent;
+  padding: 10px 0;
   color: white;
   text-align: center;
   font-size: 1rem;
+  font-weight: 800;
 }
 
 .footer a {
