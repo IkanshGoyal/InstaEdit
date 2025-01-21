@@ -1,4 +1,3 @@
-/* ImageEditor.css */
 .editor-container {
   margin: 0;
   padding: 0;
@@ -225,7 +224,8 @@
   margin-top: 20px;
 }
 
-.action-button, .behind-text {
+.action-button,
+.behind-text {
   padding: 8px 16px;
   background: #0f2557;
   color: white;
@@ -243,7 +243,6 @@
   background: #0056b3;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .editor-container {
     padding: 10px;
@@ -398,21 +397,17 @@
   display: flex;
   padding-bottom: 10%;
   justify-content: center;
-  position: relative; /* Ensure the crop rectangle is positioned relative to the canvas */
+  position: relative;
 }
 
 .crop-rectangle {
   position: absolute;
-  border: 2px dashed #fff; /* White dashed border for visibility */
+  border: 2px dashed #fff; 
   cursor: move;
-  resize: both; /* Allow resizing */
-  overflow: auto; /* Enable resize handles */
-  pointer-events: all; /* Ensure the rectangle can be interacted with */
-  /* width: fit-content; Default width fits content */
-  /* height: fit-content; Default height fits content */
+  resize: both; 
+  overflow: auto; 
+  pointer-events: all; 
 }
-
-
 
 .crop-rectangle::after {
   content: "";
@@ -421,7 +416,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border: 2px dashed #000; /* Black dashed border for contrast */
+  border: 2px dashed #000; 
 }
 
 .crop-buttons {

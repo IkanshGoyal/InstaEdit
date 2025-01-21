@@ -17,11 +17,7 @@ const ImageEditor = () => {
   const [rotation, setRotation] = useState(0);
   const [image, setImage] = useState(null);
   const [editedImage, setEditedImage] = useState(null);
-
-  const [mask, setMask] = useState(null);
   const [maskArray, setMaskArray] = useState(null);
-  const [originalWidth, setOriginalWidth] = useState(0);
-  const [originalHeight, setOriginalHeight] = useState(0);
 
   const [filters, setFilters] = useState({
     brightness: 100,
@@ -47,6 +43,7 @@ const ImageEditor = () => {
     fontWeight: "normal",
     fontSize: 48,
   });
+
   const [isCropping, setIsCropping] = useState(false);
   const [cropRect, setCropRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -86,10 +83,7 @@ const ImageEditor = () => {
 
       const data = await response.json();
 
-      setMask(data.mask);
       setMaskArray(data.mask_array);
-      setOriginalWidth(data.original_width);
-      setOriginalHeight(data.original_height);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -101,53 +95,64 @@ const ImageEditor = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    canvas.width = originalWidth;
-    canvas.height = originalHeight;
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
 
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    tempCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
 
-    const maskCanvas = document.createElement("canvas");
-    const maskCtx = maskCanvas.getContext("2d");
-    maskCanvas.width = originalWidth;
-    maskCanvas.height = originalHeight;
+    canvas.width = image.width;
+    canvas.height = image.height;
 
-    const maskImg = new Image();
-    maskImg.src = `data:image/png;base64,${mask}`;
-    maskImg.onload = () => {
-      maskCtx.drawImage(maskImg, 0, 0, originalWidth, originalHeight);
+    ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
 
-      const maskImageData = maskCtx.getImageData(
-        0,
-        0,
-        originalWidth,
-        originalHeight
-      );
-      const maskData = maskImageData.data;
+    const originalImageCanvas = document.createElement("canvas");
+    const originalImageCtx = originalImageCanvas.getContext("2d");
+    originalImageCanvas.width = image.width;
+    originalImageCanvas.height = image.height;
 
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
+    originalImageCtx.drawImage(
+      image,
+      0,
+      0,
+      originalImageCanvas.width,
+      originalImageCanvas.height
+    );
 
-      console.log(maskData)
+    const originalImageData = originalImageCtx.getImageData(
+      0,
+      0,
+      originalImageCanvas.width,
+      originalImageCanvas.height
+    );
+    const originalData = originalImageData.data;
 
-      for (let i = 0; i < maskData.length; i += 4) {
-        if (maskData[i] === 1) {
-          data[i] = data[i]; 
-          data[i + 1] = data[i + 1]; 
-          data[i + 2] = data[i + 2]; 
-          data[i + 3] = 255; 
-        } else {
-          data[i + 3] = 128; 
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    const scaleX = maskArray[0].length / image.width;
+    const scaleY = maskArray.length / image.height;
+
+    for (let y = 0; y < image.height; y++) {
+      for (let x = 0; x < image.width; x++) {
+        const maskX = Math.floor(x * scaleX);
+        const maskY = Math.floor(y * scaleY);
+
+        if (maskArray[maskY][maskX] === 1) {
+          const imageIndex = (y * image.width + x) * 4;
+
+          data[imageIndex] = originalData[imageIndex];
+          data[imageIndex + 1] = originalData[imageIndex + 1];
+          data[imageIndex + 2] = originalData[imageIndex + 2];
+          data[imageIndex + 3] = 255;
         }
       }
+    }
 
-      ctx.putImageData(imageData, 0, 0);
+    ctx.putImageData(imageData, 0, 0);
 
-      ctx.fillStyle = "white";
-      ctx.font = "48px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(textProperties.text, canvas.width / 2, canvas.height / 2);
-    };
+    setEditedImage(canvas.toDataURL());
   };
 
   const handleHome = () => {
@@ -398,7 +403,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 0,
           saturation: 120,
-          warmth: 120,
+          warmth: 20,
           vibrance: 0,
           sharpness: 0,
         });
@@ -412,7 +417,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 0,
           saturation: 150,
-          warmth: 100,
+          warmth: 0,
           vibrance: 50,
           sharpness: 0,
         });
@@ -426,7 +431,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 200,
           saturation: 100,
-          warmth: 80,
+          warmth: 0,
           vibrance: 0,
           sharpness: 0,
         });
@@ -440,7 +445,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 0,
           saturation: 0,
-          warmth: 100,
+          warmth: 0,
           vibrance: 0,
           sharpness: 0,
         });
@@ -468,7 +473,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 0,
           saturation: 100,
-          warmth: 100,
+          warmth: 0,
           vibrance: 0,
           sharpness: 0,
         });
@@ -482,7 +487,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 0,
           saturation: 100,
-          warmth: 100,
+          warmth: 0,
           vibrance: 0,
           sharpness: 0,
         });
@@ -496,7 +501,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 30,
           saturation: 80,
-          warmth: 120,
+          warmth: 0,
           vibrance: 0,
           sharpness: 0,
         });
@@ -510,7 +515,7 @@ const ImageEditor = () => {
           highlights: 100,
           hue: 0,
           saturation: 120,
-          warmth: 100,
+          warmth: 0,
           vibrance: 20,
           sharpness: 0,
         });
@@ -524,7 +529,7 @@ const ImageEditor = () => {
           highlights: 80,
           hue: 0,
           saturation: 100,
-          warmth: 100,
+          warmth: 0,
           vibrance: 0,
           sharpness: 0,
         });
@@ -540,12 +545,8 @@ const ImageEditor = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       setCropRect({
-        // x: canvas.width * 0.05, // Why exactly did we do this?
-        // y: canvas.height * 0.05, // Why exactly did we do this?
         x: 0,
         y: 0,
-        // width: canvas.width * 0.3,
-        // height: canvas.height * 0.3,
         width: canvas.width * 0.3,
         height: canvas.height * 0.3,
       });
@@ -798,7 +799,6 @@ const ImageEditor = () => {
 
   return (
     <div className="editor-container">
-      {/* Header */}
       <div className="header">
         <h2 className="title" onClick={handleHome}>
           InstaEdit
@@ -816,7 +816,6 @@ const ImageEditor = () => {
         </div>
       </div>
 
-      {/* Controls */}
       <div className="controls">
         <Tooltip title="Add Text">
           <button
@@ -907,9 +906,7 @@ const ImageEditor = () => {
         </Tooltip>
       </div>
 
-      {/* Editor Layout */}
       <div className="editor-layout">
-        {/* Show the upload container when no image is uploaded */}
         {!image && (
           <div className="container">
             <div className="folder">
@@ -932,18 +929,15 @@ const ImageEditor = () => {
           </div>
         )}
 
-        {/* Left: Canvas */}
         <div className="canvas-container">
-          {/* Always render the canvas */}
           <canvas
             ref={canvasRef}
-            className={`editor-canvas ${!image ? "hidden" : ""}`} // Hide canvas when no image is uploaded
+            className={`editor-canvas ${!image ? "hidden" : ""}`}
             onMouseDown={isCropping ? handleMouseDown : null}
             onMouseMove={isCropping ? handleMouseMove : null}
             onMouseUp={isCropping ? handleMouseUp : null}
           />
 
-          {/* Render cropping UI if cropping is active */}
           {isCropping && (
             <>
               <div
@@ -972,7 +966,6 @@ const ImageEditor = () => {
           )}
         </div>
 
-        {/* Right: Controls */}
         <div
           className="controls-section"
           style={{
