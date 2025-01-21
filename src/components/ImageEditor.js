@@ -10,6 +10,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
+import aws4 from "aws4";
 
 const ImageEditor = () => {
   const navigate = useNavigate();
@@ -52,41 +53,73 @@ const ImageEditor = () => {
   const fileInputRef = useRef(null);
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+	const file = e.target.files[0];
+	if (!file) return;
 
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          setImage(img);
-          drawOriginalImage(img);
-        };
-      };
-      reader.readAsDataURL(file);
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to process image");
-      }
-
-      const data = await response.json();
-
-      setMaskArray(data.mask_array);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+	const reader = new FileReader();
+	reader.onload = (event) => {
+	  const img = new Image();
+	  img.src = event.target.result;
+	  img.onload = () => {
+		setImage(img);
+		drawOriginalImage(img); 
+	  };
+	};
+	reader.readAsDataURL(file);
+  
+	const encodeImageToBase64 = (file) => {
+	  return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve(reader.result.split(",")[1]); 
+		reader.onerror = (error) => reject(error);
+		reader.readAsDataURL(file);
+	  });
+	};
+  
+	try {
+	  const base64Image = await encodeImageToBase64(file);
+  
+	  const region = process.env.REACT_APP_AWS_REGION;
+	  const endpoint = process.env.REACT_APP_SAGEMAKER_ENDPOINT;
+	  const accessKeyId = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+	  const secretAccessKey = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+	  const service = "sagemaker";
+  
+	  const payload = {
+		file: base64Image,
+	  };
+  
+	  const options = {
+		host: endpoint.replace("https://", "").replace("/invocations", ""),
+		method: "POST",
+		path: "/invocations",
+		headers: {
+		  "Content-Type": "application/json",
+		},
+		body: JSON.stringify(payload),
+	  };
+  
+	  const signedRequest = aws4.sign(options, {
+		accessKeyId,
+		secretAccessKey,
+	  });
+  
+	  const response = await fetch(`https://${signedRequest.host}${signedRequest.path}`, {
+		method: signedRequest.method,
+		headers: signedRequest.headers,
+		body: signedRequest.body,
+	  });
+  
+	  if (!response.ok) {
+		throw new Error("Failed to process image");
+	  }
+  
+	  const data = await response.json();
+  
+	  setMaskArray(data.mask_array); 
+	} catch (error) {
+	  console.error("Error:", error);
+	}
   };
 
   const drawTextBehindObject = () => {
