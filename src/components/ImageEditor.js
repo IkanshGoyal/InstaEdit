@@ -53,73 +53,92 @@ const ImageEditor = () => {
   const fileInputRef = useRef(null);
 
   const handleImageUpload = async (e) => {
-	const file = e.target.files[0];
-	if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-	const reader = new FileReader();
-	reader.onload = (event) => {
-	  const img = new Image();
-	  img.src = event.target.result;
-	  img.onload = () => {
-		setImage(img);
-		drawOriginalImage(img); 
-	  };
-	};
-	reader.readAsDataURL(file);
-  
-	const encodeImageToBase64 = (file) => {
-	  return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = () => resolve(reader.result.split(",")[1]); 
-		reader.onerror = (error) => reject(error);
-		reader.readAsDataURL(file);
-	  });
-	};
-  
-	try {
-	  const base64Image = await encodeImageToBase64(file);
-  
-	  const region = process.env.REACT_APP_AWS_REGION;
-	  const endpoint = process.env.REACT_APP_SAGEMAKER_ENDPOINT;
-	  const accessKeyId = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
-	  const secretAccessKey = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
-	  const service = "sagemaker";
-  
-	  const payload = {
-		file: base64Image,
-	  };
-  
-	  const options = {
-		host: endpoint.replace("https://", "").replace("/invocations", ""),
-		method: "POST",
-		path: "/invocations",
-		headers: {
-		  "Content-Type": "application/json",
-		},
-		body: JSON.stringify(payload),
-	  };
-  
-	  const signedRequest = aws4.sign(options, {
-		accessKeyId,
-		secretAccessKey,
-	  });
-  
-	  const response = await fetch(`https://${signedRequest.host}${signedRequest.path}`, {
-		method: signedRequest.method,
-		headers: signedRequest.headers,
-		body: signedRequest.body,
-	  });
-  
-	  if (!response.ok) {
-		throw new Error("Failed to process image");
-	  }
-  
-	  const data = await response.json();
-  
-	  setMaskArray(data.mask_array); 
-	} catch (error) {
-	  console.error("Error:", error);
-	}
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        setImage(img);
+        drawOriginalImage(img);
+      };
+    };
+    reader.readAsDataURL(file);
+
+    const encodeImageToBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    };
+
+    try {
+      // Convert the file to a Base64-encoded string
+      const base64Image = await encodeImageToBase64(file);
+
+      // Load environment variables
+      const region = process.env.REACT_APP_AWS_REGION;
+      const endpoint = process.env.REACT_APP_SAGEMAKER_ENDPOINT;
+      const accessKeyId = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+      const secretAccessKey = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+      console.log(endpoint);
+      
+
+      const payload = {
+        image: base64Image,
+      };
+
+      // Parse the endpoint URL to construct the request options
+      const endpointUrl = new URL(endpoint);
+      console.log(`endpointUrl: ${endpointUrl}`);
+      
+      const options = {
+        host: endpointUrl.host,
+        method: "POST",
+        path: endpointUrl.pathname,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      };
+
+      // Sign the request using aws4
+      const signedRequest = aws4.sign(options, {
+        accessKeyId,
+        secretAccessKey,
+      });
+
+      // Make the API call to the SageMaker endpoint
+      const response = await fetch(
+        `https://${signedRequest.host}${signedRequest.path}`,
+        {
+          method: signedRequest.method,
+          headers: signedRequest.headers,
+          body: signedRequest.body,
+        }
+      );
+
+      // console.log(`Response: ${response.ok}`);
+      
+
+      // Check for errors in the response
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Failed to process image: ${errorDetails}`);
+      }
+
+      // Parse the response and update the state
+      const data = await response.json();
+      // console.log(data);
+      
+      setMaskArray(data);
+    } catch (error) {
+      console.error("Error invoking SageMaker endpoint:", error);
+    }
   };
 
   const drawTextBehindObject = () => {
