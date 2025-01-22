@@ -43,7 +43,7 @@ Welcome to the **ML-Powered Image Editor**! This project is a fully-featured ima
 - It generates a **mask array** using the object segmentation model and sends it back to the frontend.  
 
 ### 3. **ML Model (PyTorch)**  
-- We trained a **semantic segmentation model** using PyTorch to identify and segment objects in an image.  
+- We trained a **U-NET segmentation model** using PyTorch to identify and segment objects in an image.  
 - The model generates a mask array that distinguishes between the foreground (objects) and the background.  
 - This mask is used to place text behind objects seamlessly.  
 
@@ -119,10 +119,11 @@ instaedit/
    │   ├── App.js             # Main application component  
    │   └── index.js           # Entry point  
    ├── package.json           # Frontend dependencies  
-   ├── app.py                 # Flask application  
-   ├── object_models/         # PyTorch model and utilities  
+   ├── app.py                 # Flask application   
    ├── requirements.txt       # Backend dependencies  
-   └── README.md              # Project documentation  
+   ├── README.md              # Project documentation
+   ├── AWS-Sagemaker/Code     # AWS Sagemaker dependencies
+   └── notebook               # Model development 
 ```  
 
 ---
