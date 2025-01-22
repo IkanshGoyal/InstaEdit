@@ -1,70 +1,142 @@
-# Getting Started with Create React App
+# 🖼️ ML-Powered Image Editor  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the **ML-Powered Image Editor**! This project is a fully-featured image editing tool built with **React**, **Flask**, and **PyTorch**. It allows users to upload images, apply filters, adjust settings, add text, crop, rotate, and even place text behind objects using a custom **object segmentation model**.  
 
-## Available Scripts
+🚀 **Live Demo**: [Link](https://instaedit.vercel.app)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🌟 **Features**  
+- **Image Upload**: Upload any image for editing.  
+- **Filters**: Apply preset filters like Warm, Vivid, Cool, Grayscale, Sepia, and more.  
+- **Adjustments**: Fine-tune brightness, contrast, exposure, shadows, highlights, saturation, and other parameters.  
+- **Text Overlay**: Add custom text with control over font, size, color, opacity, and rotation.  
+- **Crop & Rotate**: Intuitively crop and rotate images for the perfect composition.  
+- **ML-Powered Text Behind Objects**: Place text behind objects using a PyTorch-based object segmentation model.  
+- **Save & Download**: Export your edited images in high quality.  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 💻 **Tech Stack**  
+- **Frontend**:  
+  - React  
+  - Material-UI (for icons and tooltips)  
+  - HTML5 Canvas (for real-time image rendering)  
+- **Backend**:  
+  - Flask (for image processing and API endpoints)  
+  - PyTorch (for object segmentation model)  
+- **Deployment**:  
+  - Vercel (frontend)  
+  - AWS SageMaker (backend and ML model)  
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠️ **How It Works**  
 
-### `npm run build`
+### 1. **Frontend (React)**  
+- The frontend is built with **React** and uses **HTML5 Canvas** for real-time image rendering.  
+- Users can upload images, apply filters, add text, crop, and rotate images.  
+- The UI is intuitive and responsive, thanks to **Material-UI** components.  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. **Backend (Flask)**  
+- The Flask backend handles image uploads, processing, and communication with the PyTorch model.  
+- It generates a **mask array** using the object segmentation model and sends it back to the frontend.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. **ML Model (PyTorch)**  
+- We trained a **semantic segmentation model** using PyTorch to identify and segment objects in an image.  
+- The model generates a mask array that distinguishes between the foreground (objects) and the background.  
+- This mask is used to place text behind objects seamlessly.  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🚀 **Getting Started**  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prerequisites  
+- Node.js (for frontend)  
+- Python 3.8+ (for backend)  
+- Flask  
+- PyTorch  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Installation  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Frontend  
+1. Clone the repository:  
+   ```bash  
+   git clone https://github.com/IkanshGoyal/InstaEdit.git  
+   cd instaedit  
+   ```  
+2. Install dependencies:  
+   ```bash  
+   npm install  
+   ```  
+3. Start the development server:  
+   ```bash  
+   npm start  
+   ```  
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Backend  
+1. Install dependencies:  
+   ```bash  
+   pip install -r requirements.txt  
+   ```  
+2. Start the Flask server:  
+   ```bash  
+   python app.py  
+   ```  
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🖼️ **Using the Image Editor**  
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Upload an Image**: Click the "Upload Image" button to select an image from your device.  
+2. **Apply Filters**: Choose from a variety of preset filters to enhance your image.  
+3. **Adjust Settings**: Fine-tune brightness, contrast, exposure, and other parameters.  
+4. **Add Text**: Customize text with options for font, size, color, opacity, and rotation.  
+5. **Crop & Rotate**: Use the crop tool to adjust the composition and rotate the image as needed.  
+6. **ML-Powered Text Behind Objects**: Click "Apply Text Behind Object" to place text behind objects in the image.  
+7. **Save Your Work**: Click "Save Image" to download the edited image.  
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🤖 **ML-Powered Text Behind Objects**  
 
-### Analyzing the Bundle Size
+This feature uses a **PyTorch-based object segmentation model** to generate a mask array that identifies objects in the image. Here’s how it works:  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. The user uploads an image.  
+2. The image is sent to the Flask backend, where the PyTorch model processes it.  
+3. The model generates a mask array that defines the object boundaries.  
+4. The frontend uses this mask to place text behind objects while preserving the natural look of the image.  
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 📂 **Project Structure**  
 
-### Advanced Configuration
+```  
+instaedit/  
+   ├── public/  
+   ├── src/  
+   │   ├── components/        # React components  
+   │   ├── App.js             # Main application component  
+   │   └── index.js           # Entry point  
+   ├── package.json           # Frontend dependencies  
+   ├── app.py                 # Flask application  
+   ├── object_models/         # PyTorch model and utilities  
+   ├── requirements.txt       # Backend dependencies  
+   └── README.md              # Project documentation  
+```  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 🙏 **Credits**  
+- Developed by **Ikansh** and **Ujjawal**.  
+- Special thanks to the open-source community for the amazing tools and libraries that made this project possible.  
+ 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Feel free to explore the project, contribute, or reach out with any questions! Happy coding! 😊  
+
+--- 
+
+#React #Flask #PyTorch #AI #ImageEditing #WebDevelopment #OpenSource #GitHub
