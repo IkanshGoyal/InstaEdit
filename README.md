@@ -2,7 +2,9 @@
 
 Welcome to the **ML-Powered Image Editor**! This project is a fully-featured image editing tool built with **React**, **Flask**, and **PyTorch**. It allows users to upload images, apply filters, adjust settings, add text, crop, rotate, and even place text behind objects using a custom **object segmentation model**.  
 
-🚀 **Live Demo**: [Link](https://instaedit.vercel.app)
+🚀 **Live Link**: [Link](https://instaedit.vercel.app)
+🖥️ **Live Demo**: [Link]([https://instaedit.vercel.app](https://www.linkedin.com/posts/ujjawal-gusain_artificialintelligence-computervision-imageprocessing-activity-7288035239581425665-YJr7)
+
 
 ---
 
